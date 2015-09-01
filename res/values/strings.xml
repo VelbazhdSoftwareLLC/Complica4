@@ -1,5 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">Complica4</string>
+    <string name="title_activity_splash">Complica4</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_game">Complica4</string>
+    <string name="redirect_activity_is_missing_message">Redirect activity is missing!</string>
 
 </resources>
