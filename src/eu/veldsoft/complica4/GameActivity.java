@@ -1,11 +1,15 @@
 package eu.veldsoft.complica4;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class GameActivity extends Activity {
 
@@ -13,12 +17,48 @@ public class GameActivity extends Activity {
 
 	private View.OnClickListener listeners[] = new View.OnClickListener[Board.COLS];
 
+	private final Handler handler = new Handler();
+
+	private Runnable computerMoves = new Runnable() {
+		@Override
+		public void run() {
+			if(board.isGameOver() == true) {
+				return;
+			}
+			
+			//TODO Implement better AI.
+			switch (board.getTurn() % 4) {
+			case 0:
+				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER1);
+				break;
+			case 1:
+				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER2);
+				break;
+			case 2:
+				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER3);
+				break;
+			case 3:
+				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER4);
+				break;
+			}
+
+			board.next();
+			updateViews();
+
+			if (board.getTurn() % 4 != 0) {
+				handler.postDelayed(computerMoves, 500);
+			}
+		}
+	};
+
 	private Board board = new Board();
 
 	private void updateViews() {
 		Piece values[][] = board.getPieces();
 		for (int i = 0; i < pieces.length; i++) {
 			for (int j = 0; j < pieces[i].length; j++) {
+				pieces[i][j].setAlpha(1F);
+
 				switch (values[i][j]) {
 				case PLAYER1:
 					pieces[i][j].setImageResource(R.drawable.blue);
@@ -35,6 +75,25 @@ public class GameActivity extends Activity {
 				case EMPTY:
 					pieces[i][j].setImageResource(R.drawable.white);
 					break;
+				}
+			}
+		}
+
+		if (board.isGameOver() == true || board.hasWinner() == true) {
+			Toast.makeText(this,
+					getResources().getString(R.string.game_over_message),
+					Toast.LENGTH_LONG).show();
+		}
+
+		int winners[][] = board.winners();
+		for (int i = 0; i < pieces.length; i++) {
+			for (int j = 0; j < pieces[i].length; j++) {
+				if (board.isGameOver() == true && values[i][j] == Piece.EMPTY) {
+					pieces[i][j].setImageBitmap(null);
+				}
+
+				if (board.isGameOver() == true && winners[i][j] == 0) {
+					pieces[i][j].setAlpha(0.4F);
 				}
 			}
 		}
@@ -86,6 +145,14 @@ public class GameActivity extends Activity {
 			listeners[index] = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					if (board.isGameOver() == true) {
+						return;
+					}
+
+					if (board.getTurn() % 4 != 0) {
+						return;
+					}
+
 					int i = -1;
 					for (i = 0; i < listeners.length; i++) {
 						if (this == listeners[i]) {
@@ -106,9 +173,11 @@ public class GameActivity extends Activity {
 						board.addTo(i, Piece.PLAYER4);
 						break;
 					}
-					// TODO board.isGameOver();
 					board.next();
 					updateViews();
+
+					handler.postDelayed(computerMoves, 500);
+
 				}
 			};
 
@@ -121,5 +190,30 @@ public class GameActivity extends Activity {
 
 		board.reset();
 		updateViews();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.game_option_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.new_game:
+			board.reset();
+			updateViews();
+			break;
+		case R.id.help:
+			 startActivity(new Intent(GameActivity.this, HelpActivity.class));
+			break;
+		case R.id.about:
+			 startActivity(new Intent(GameActivity.this,
+			 AboutActivity.class));
+			break;
+		}
+		return true;
 	}
 }

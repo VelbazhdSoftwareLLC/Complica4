@@ -3,8 +3,15 @@
 
     <string name="app_name">Complica4</string>
     <string name="title_activity_splash">Complica4</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_game">Complica4</string>
     <string name="redirect_activity_is_missing_message">Redirect activity is missing!</string>
+    <string name="game_over_message">Game Over</string>
+    <string name="new_game_menu">New Game</string>
+    <string name="help_menu">Help</string>
+    <string name="about_menu">About</string>
+    <string name="title_activity_help">Help</string>
+    <string name="title_activity_about">About</string>
+    <string name="about_text">Complica4 was implemented by Velbazhd Software LLC as a promotional game for Rolers Net website.</string>
+    <string name="help_text">Complica4 is a modified version for four players of the game Complica, which is similar to the game Connect Four. In Complica (not like in Connect Four), when a piece is placed, it does not remain there for the entire game. Another piece may be used to slide the entire row over. Winner is first person to have 4 pieces in a row. The mechanic of the sliding rows means that each player can possibly have 4 in a row at the same time, causing the game to continue until this situation can be broken up.</string>
 
 </resources>
