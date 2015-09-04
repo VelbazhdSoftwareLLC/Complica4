@@ -2,12 +2,17 @@ package eu.veldsoft.complica4;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,14 +24,24 @@ public class GameActivity extends Activity {
 
 	private final Handler handler = new Handler();
 
+	private SoundPool sounds = null;
+
+	private int clickId = -1;
+
+	private int finishId = -1;
+
+	private boolean startAnimationRunning = true;
+
+	private Board board = new Board();
+
 	private Runnable computerMoves = new Runnable() {
 		@Override
 		public void run() {
-			if(board.isGameOver() == true) {
+			if (board.isGameOver() == true) {
 				return;
 			}
-			
-			//TODO Implement better AI.
+
+			// TODO Implement better AI.
 			switch (board.getTurn() % 4) {
 			case 0:
 				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER1);
@@ -51,7 +66,34 @@ public class GameActivity extends Activity {
 		}
 	};
 
-	private Board board = new Board();
+	private void startAnimation() {
+		// TODO End animation listener.
+		startAnimationRunning = true;
+		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+		fadeIn.setAnimationListener(new AnimationListener() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				((ImageView) findViewById(R.id.background_logo)).setAlpha(0.1F);
+				startAnimationRunning = false;
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+		});
+		findViewById(R.id.background_logo).startAnimation(fadeIn);
+
+		Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+		for (int i = 0; i < pieces.length; i++) {
+			for (int j = 0; j < pieces[i].length; j++) {
+				pieces[i][j].startAnimation(fadeOut);
+			}
+		}
+	}
 
 	private void updateViews() {
 		Piece values[][] = board.getPieces();
@@ -83,6 +125,7 @@ public class GameActivity extends Activity {
 			Toast.makeText(this,
 					getResources().getString(R.string.game_over_message),
 					Toast.LENGTH_LONG).show();
+			sounds.play(finishId, 0.99f, 0.99f, 0, 0, 1);
 		}
 
 		int winners[][] = board.winners();
@@ -103,6 +146,10 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+
+		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+		clickId = sounds.load(this, R.raw.schademans_pipe9, 1);
+		finishId = sounds.load(this, R.raw.game_sound_correct, 1);
 
 		pieces[0][0] = (ImageView) findViewById(R.id.piece00);
 		pieces[0][1] = (ImageView) findViewById(R.id.piece01);
@@ -175,9 +222,9 @@ public class GameActivity extends Activity {
 					}
 					board.next();
 					updateViews();
+					sounds.play(clickId, 0.99f, 0.99f, 0, 0, 1);
 
 					handler.postDelayed(computerMoves, 500);
-
 				}
 			};
 
@@ -190,6 +237,8 @@ public class GameActivity extends Activity {
 
 		board.reset();
 		updateViews();
+
+		startAnimation();
 	}
 
 	@Override
@@ -207,13 +256,20 @@ public class GameActivity extends Activity {
 			updateViews();
 			break;
 		case R.id.help:
-			 startActivity(new Intent(GameActivity.this, HelpActivity.class));
+			startActivity(new Intent(GameActivity.this, HelpActivity.class));
 			break;
 		case R.id.about:
-			 startActivity(new Intent(GameActivity.this,
-			 AboutActivity.class));
+			startActivity(new Intent(GameActivity.this, AboutActivity.class));
 			break;
 		}
 		return true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		sounds.release();
+		sounds = null;
 	}
 }

@@ -6,10 +6,11 @@
     tools:context="${relativePackage}.${activityClass}" >
 
     <ImageView
+        android:id="@+id/background_logo" 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerVertical="true"
-        android:alpha="0.5"
+        android:alpha="1.0"
         android:src="@drawable/roleri_logo" />
 
 <ImageView android:id="@+id/piece00" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
