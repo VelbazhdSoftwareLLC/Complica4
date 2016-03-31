@@ -1,8 +1,10 @@
-package eu.veldsoft.complica4;
+package eu.veldsoft.complica4.model;
 
-class Board {
-	static final int ROWS = 7;
-	static final int COLS = 5;
+public class Board {
+	public static final int ROWS = 7;
+
+	public static final int COLS = 5;
+
 	static final int WIN_LINE_LENGTH = 4;
 
 	private int turn = 0;
@@ -130,6 +132,22 @@ class Board {
 
 	public Piece[][] getPieces() {
 		return pieces;
+	}
+
+	public int[][] getState() {
+		int result[][] = new int[pieces.length][];
+
+		for (int i = 0; i < pieces.length; i++) {
+			result[i] = new int[pieces[i].length];
+		}
+
+		for (int i = 0; i < pieces.length; i++) {
+			for (int j = 0; j < pieces[i].length; j++) {
+				result[i][j] = pieces[i][j].getId();
+			}
+		}
+
+		return result;
 	}
 
 	public void next() {

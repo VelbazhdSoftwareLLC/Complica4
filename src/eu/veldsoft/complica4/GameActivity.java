@@ -15,6 +15,10 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
+import eu.veldsoft.complica4.model.Board;
+import eu.veldsoft.complica4.model.Piece;
+import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligence;
 
 public class GameActivity extends Activity {
 
@@ -34,26 +38,33 @@ public class GameActivity extends Activity {
 
 	private Board board = new Board();
 
-	private Runnable computerMoves = new Runnable() {
+	private ArtificialIntelligence bots[] = {
+			new RandomArtificialIntelligence(),
+			new RandomArtificialIntelligence(),
+			new RandomArtificialIntelligence(),
+			new RandomArtificialIntelligence(), };
+
+	private Runnable botAction = new Runnable() {
 		@Override
 		public void run() {
 			if (board.isGameOver() == true) {
 				return;
 			}
 
-			// TODO Implement better AI.
+			int state[][] = board.getState();
+			
 			switch (board.getTurn() % 4) {
 			case 0:
-				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER1);
+				board.addTo(bots[0].move(state, 1), Piece.PLAYER1);
 				break;
 			case 1:
-				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER2);
+				board.addTo(bots[1].move(state, 2), Piece.PLAYER2);
 				break;
 			case 2:
-				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER3);
+				board.addTo(bots[2].move(state, 3), Piece.PLAYER3);
 				break;
 			case 3:
-				board.addTo(Util.PRNG.nextInt(Board.COLS), Piece.PLAYER4);
+				board.addTo(bots[3].move(state, 4), Piece.PLAYER4);
 				break;
 			}
 
@@ -61,7 +72,7 @@ public class GameActivity extends Activity {
 			updateViews();
 
 			if (board.getTurn() % 4 != 0) {
-				handler.postDelayed(computerMoves, 500);
+				handler.postDelayed(botAction, 500);
 			}
 		}
 	};
@@ -224,7 +235,7 @@ public class GameActivity extends Activity {
 					updateViews();
 					sounds.play(clickId, 0.99f, 0.99f, 0, 0, 1);
 
-					handler.postDelayed(computerMoves, 500);
+					handler.postDelayed(botAction, 500);
 				}
 			};
 
