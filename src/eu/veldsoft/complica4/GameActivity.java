@@ -18,6 +18,7 @@ import android.widget.Toast;
 import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligence;
 
 public class GameActivity extends Activity {
@@ -41,7 +42,8 @@ public class GameActivity extends Activity {
 	private ArtificialIntelligence bots[] = {
 			new RandomArtificialIntelligence(),
 			new RandomArtificialIntelligence(),
-			new RandomArtificialIntelligence(),
+			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS, 6,
+					Board.COLS, Piece.getMinId(), Piece.getMaxId()),
 			new RandomArtificialIntelligence(), };
 
 	private Runnable botAction = new Runnable() {
@@ -52,7 +54,7 @@ public class GameActivity extends Activity {
 			}
 
 			int state[][] = board.getState();
-			
+
 			switch (board.getTurn() % 4) {
 			case 0:
 				board.addTo(bots[0].move(state, 1), Piece.PLAYER1);
