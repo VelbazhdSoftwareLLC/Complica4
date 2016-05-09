@@ -20,6 +20,7 @@ import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
 
 public class GameActivity extends Activity {
 
@@ -40,11 +41,10 @@ public class GameActivity extends Activity {
 	private Board board = new Board();
 
 	private ArtificialIntelligence bots[] = {
-			new RandomArtificialIntelligence(),
-			new RandomArtificialIntelligence(),
-			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS, 6,
-					Board.COLS, Piece.getMinId(), Piece.getMaxId()),
-			new RandomArtificialIntelligence(), };
+			new SimpleRulesArtificialIntelligence(),
+			new SimpleRulesArtificialIntelligence(),
+			new SimpleRulesArtificialIntelligence(),
+			new SimpleRulesArtificialIntelligence(), };
 
 	private Runnable botAction = new Runnable() {
 		@Override

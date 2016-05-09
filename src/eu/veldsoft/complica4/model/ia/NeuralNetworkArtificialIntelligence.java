@@ -8,8 +8,7 @@ import org.neuroph.util.TransferFunctionType;
  * 
  * @author Todor Balabanov
  */
-public class NeuralNetworkArtificialIntelligence implements
-		ArtificialIntelligence {
+public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntelligence {
 
 	/**
 	 * 
@@ -47,22 +46,13 @@ public class NeuralNetworkArtificialIntelligence implements
 	 */
 	@Override
 	public int move(int[][] state, int player) throws NoValidMoveException {
-		/*
-		 * State matrix should be with valid dimensions.
-		 */
-		if (state == null) {
-			throw new NoValidMoveException();
-		}
+		super.move(state, player);
 
 		/*
 		 * State matrix should be with valid dimensions.
 		 */
 		int size = 0;
 		for (int i = 0; i < state.length; i++) {
-			if (state[i] == null) {
-				throw new NoValidMoveException();
-			}
-
 			size += state[i].length;
 		}
 
