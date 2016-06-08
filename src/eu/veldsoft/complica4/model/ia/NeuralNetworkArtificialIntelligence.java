@@ -1,14 +1,20 @@
 package eu.veldsoft.complica4.model.ia;
 
-import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.util.TransferFunctionType;
+import java.util.Arrays;
+
+import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.ml.data.MLData;
+import org.encog.ml.data.basic.BasicMLData;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.layers.BasicLayer;
 
 /**
  * Bot based on artificial neural networks.
  * 
  * @author Todor Balabanov
  */
-public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntelligence {
+public class NeuralNetworkArtificialIntelligence extends
+		AbstractArtificialIntelligence {
 
 	/**
 	 * 
@@ -23,7 +29,7 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 	/**
 	 * Three layer artificial neural network.
 	 */
-	private MultiLayerPerceptron net = null;
+	private BasicNetwork net = new BasicNetwork();
 
 	/**
 	 * 
@@ -37,8 +43,12 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 			int outputSize, int minPiece, int maxPiece) {
 		min = minPiece;
 		max = maxPiece;
-		net = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, inputSize,
-				hiddenSize, outputSize);
+
+		net.addLayer(new BasicLayer(null, true, inputSize));
+		net.addLayer(new BasicLayer(new ActivationSigmoid(), true, hiddenSize));
+		net.addLayer(new BasicLayer(new ActivationSigmoid(), false, outputSize));
+		net.getStructure().finalizeStructure();
+		net.reset();
 	}
 
 	/**
@@ -59,7 +69,7 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 		/*
 		 * Check ANN input layer size.
 		 */
-		if (size != net.getInputsCount()) {
+		if (size != net.getInputCount()) {
 			throw new NoValidMoveException();
 		}
 
@@ -74,26 +84,22 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 		}
 
 		/*
-		 * Feed the ANN input.
+		 * Feed the ANN input. ANN calculation.
 		 */
-		net.setInput(input);
-
-		/*
-		 * ANN calculation.
-		 */
-		net.calculate();
+		MLData data = new BasicMLData(input);
+		data = net.compute(data);
 
 		/*
 		 * Obtain the ANN output.
 		 */
-		double output[] = net.getOutput();
-
+		double output[] = data.getData();
+		
 		/*
 		 * Suggest move.
 		 */
 		int index = 0;
-		for(int i=0; i<output.length; i++) {
-			if(output[i] > output[index]) {
+		for (int i = 0; i < output.length; i++) {
+			if (output[i] > output[index]) {
 				index = i;
 			}
 		}

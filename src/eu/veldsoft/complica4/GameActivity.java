@@ -19,7 +19,6 @@ import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
-import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
 
 public class GameActivity extends Activity {
@@ -42,6 +41,9 @@ public class GameActivity extends Activity {
 
 	private ArtificialIntelligence bots[] = {
 			new SimpleRulesArtificialIntelligence(),
+//			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS,
+//					Board.COLS * Board.ROWS / 2, Board.COLS, Piece.getMinId(),
+//					Piece.getMaxId()), 
 			new SimpleRulesArtificialIntelligence(),
 			new SimpleRulesArtificialIntelligence(),
 			new SimpleRulesArtificialIntelligence(), };
