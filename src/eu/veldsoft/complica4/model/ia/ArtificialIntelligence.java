@@ -23,6 +23,11 @@ public interface ArtificialIntelligence {
 	/**
 	 * 
 	 */
+	static final int NUMBER_OF_PLAYERS = 4;
+
+	/**
+	 * 
+	 */
 	static final Set<Integer> STATE_VALUES = new HashSet<Integer>(
 			Arrays.asList(new Integer[] { 0, 1, 2, 3, 4 }));
 

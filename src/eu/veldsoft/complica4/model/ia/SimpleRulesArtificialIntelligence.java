@@ -1,5 +1,9 @@
 package eu.veldsoft.complica4.model.ia;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.veldsoft.complica4.model.Util;
 
 /**
@@ -77,8 +81,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < WIN_LINE_LENGTH
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < WIN_LINE_LENGTH && (j + k) < state[i].length; k++) {
 					if (state[i][j + k] != player) {
 						break;
 					}
@@ -134,6 +137,35 @@ public class SimpleRulesArtificialIntelligence extends
 	 * @return
 	 */
 	private int addOneAndBlockOtherToWin() {
+		/*
+		 * Put all players in a collection in order to shuffle it.
+		 */
+		List<Integer> ids = new ArrayList<Integer>();
+		for (int p = 1; p <= NUMBER_OF_PLAYERS; p++) {
+			if (p == player) {
+				continue;
+			}
+			ids.add(p);
+		}
+
+		/*
+		 * By shuffling it will not prefer the left most opponent to block.
+		 */
+		Collections.shuffle(ids);
+
+		/*
+		 * Try each opponent for direct win move.
+		 */
+		for (Integer p : ids) {
+			for (int i = 0; i < state.length; i++) {
+				int[][] nextState = copy(state);
+				tryMove(nextState, p, i);
+				if (isWinner(nextState, p) == true) {
+					return i;
+				}
+			}
+		}
+
 		return -1;
 	}
 
@@ -163,8 +195,11 @@ public class SimpleRulesArtificialIntelligence extends
 		 */
 		int result = -1;
 		if ((result = addOneAndWin()) != -1) {
+			System.out.println("Rule 1.");
 		} else if ((result = addOneAndBlockOtherToWin()) != -1) {
+			System.out.println("Rule 2.");
 		} else if ((result = addRnadom()) != -1) {
+			System.out.println("Rule 3.");
 		}
 
 		return result;
