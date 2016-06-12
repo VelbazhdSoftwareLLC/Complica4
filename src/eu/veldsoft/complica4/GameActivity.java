@@ -35,16 +35,14 @@ public class GameActivity extends Activity {
 
 	private int finishId = -1;
 
-	private boolean startAnimationRunning = true;
-
 	private Board board = new Board();
 
 	private ArtificialIntelligence bots[] = {
 			new SimpleRulesArtificialIntelligence(),
-//			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS,
-//					Board.COLS * Board.ROWS / 2, Board.COLS, Piece.getMinId(),
-//					Piece.getMaxId()), 
-			new SimpleRulesArtificialIntelligence(),
+			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS
+					+ Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS / 2,
+					Board.COLS, Piece.getMinId(), Piece.getMaxId()),
+			// new SimpleRulesArtificialIntelligence(),
 			new SimpleRulesArtificialIntelligence(),
 			new SimpleRulesArtificialIntelligence(), };
 
@@ -83,13 +81,11 @@ public class GameActivity extends Activity {
 
 	private void startAnimation() {
 		// TODO End animation listener.
-		startAnimationRunning = true;
 		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 		fadeIn.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				((ImageView) findViewById(R.id.background_logo)).setAlpha(0.1F);
-				startAnimationRunning = false;
 			}
 
 			@Override

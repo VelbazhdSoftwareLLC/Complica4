@@ -67,6 +67,11 @@ public class NeuralNetworkArtificialIntelligence extends
 		}
 
 		/*
+		 * Encode in the input the player who is playing.
+		 */
+		size += NUMBER_OF_PLAYERS;
+
+		/*
 		 * Check ANN input layer size.
 		 */
 		if (size != net.getInputCount()) {
@@ -84,6 +89,17 @@ public class NeuralNetworkArtificialIntelligence extends
 		}
 
 		/*
+		 * Mark the player who is playing.
+		 */
+		for (int i = input.length - NUMBER_OF_PLAYERS, p = 1; i < input.length; i++, p++) {
+			if (player == p) {
+				input[i] = 1;
+			} else {
+				input[i] = 0;
+			}
+		}
+
+		/*
 		 * Feed the ANN input. ANN calculation.
 		 */
 		MLData data = new BasicMLData(input);
@@ -93,7 +109,7 @@ public class NeuralNetworkArtificialIntelligence extends
 		 * Obtain the ANN output.
 		 */
 		double output[] = data.getData();
-		
+
 		/*
 		 * Suggest move.
 		 */

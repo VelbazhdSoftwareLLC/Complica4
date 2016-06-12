@@ -5,6 +5,8 @@ public class Board {
 
 	public static final int COLS = 5;
 
+	public static final int NUMBER_OF_PLAYERS = 4;
+
 	static final int WIN_LINE_LENGTH = 4;
 
 	private int turn = 0;
