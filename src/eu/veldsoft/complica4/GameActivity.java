@@ -1,10 +1,17 @@
 package eu.veldsoft.complica4;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.List;
+
+import org.encog.neural.networks.BasicNetwork;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,16 +23,24 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 import eu.veldsoft.complica4.model.Board;
+import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Piece;
+import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
 
 public class GameActivity extends Activity {
 
+	/**
+	 * Image references.
+	 */
 	private ImageView pieces[][] = new ImageView[Board.COLS][Board.ROWS];
 
-	private View.OnClickListener listeners[] = new View.OnClickListener[Board.COLS];
+	/**
+	 * Click listeners.
+	 */
+	private View.OnClickListener onClick[] = new View.OnClickListener[Board.COLS];
 
 	private final Handler handler = new Handler();
 
@@ -35,16 +50,15 @@ public class GameActivity extends Activity {
 
 	private int finishId = -1;
 
+	/**
+	 * Board object model.
+	 */
 	private Board board = new Board();
 
-	private ArtificialIntelligence bots[] = {
-			new SimpleRulesArtificialIntelligence(),
-			new NeuralNetworkArtificialIntelligence(Board.COLS * Board.ROWS
-					+ Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS / 2,
-					Board.COLS, Piece.getMinId(), Piece.getMaxId()),
-			// new SimpleRulesArtificialIntelligence(),
-			new SimpleRulesArtificialIntelligence(),
-			new SimpleRulesArtificialIntelligence(), };
+	/**
+	 * Array with bots.
+	 */
+	private ArtificialIntelligence bots[] = {};
 
 	private Runnable botAction = new Runnable() {
 		@Override
@@ -79,6 +93,28 @@ public class GameActivity extends Activity {
 		}
 	};
 
+	/**
+	 * Load ANN from a file.
+	 * 
+	 * @param name
+	 *            File name.
+	 * 
+	 * @return True if the loading is successful, false otherwise.
+	 */
+	private BasicNetwork loadFromFile(String name) {
+		BasicNetwork ann = null;
+
+		try {
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+					name));
+			ann = (BasicNetwork) in.readObject();
+			in.close();
+		} catch (Exception ex) {
+		}
+
+		return ann;
+	}
+
 	private void startAnimation() {
 		// TODO End animation listener.
 		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -104,6 +140,10 @@ public class GameActivity extends Activity {
 				pieces[i][j].startAnimation(fadeOut);
 			}
 		}
+	}
+
+	private void storeTrainingExamples(List<Example> session) {
+		//TODO Store in SQLite database.
 	}
 
 	private void updateViews() {
@@ -133,6 +173,11 @@ public class GameActivity extends Activity {
 		}
 
 		if (board.isGameOver() == true || board.hasWinner() == true) {
+			/* 
+			 * Store winner session in SQLite database.
+			 */
+			storeTrainingExamples(board.getWinnerSession());
+			
 			Toast.makeText(this,
 					getResources().getString(R.string.game_over_message),
 					Toast.LENGTH_LONG).show();
@@ -157,6 +202,17 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+
+		bots = new ArtificialIntelligence[] {
+				new SimpleRulesArtificialIntelligence(),
+				new NeuralNetworkArtificialIntelligence(
+						loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
+						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
+						Board.COLS * Board.ROWS / 2, Board.COLS,
+						Piece.getMinId(), Piece.getMaxId()),
+				// new SimpleRulesArtificialIntelligence(),
+				new SimpleRulesArtificialIntelligence(),
+				new SimpleRulesArtificialIntelligence(), };
 
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 		clickId = sounds.load(this, R.raw.schademans_pipe9, 1);
@@ -200,7 +256,7 @@ public class GameActivity extends Activity {
 
 		int index = 0;
 		for (ImageView array[] : pieces) {
-			listeners[index] = new View.OnClickListener() {
+			onClick[index] = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					if (board.isGameOver() == true) {
@@ -212,8 +268,8 @@ public class GameActivity extends Activity {
 					}
 
 					int i = -1;
-					for (i = 0; i < listeners.length; i++) {
-						if (this == listeners[i]) {
+					for (i = 0; i < onClick.length; i++) {
+						if (this == onClick[i]) {
 							break;
 						}
 					}
@@ -240,7 +296,7 @@ public class GameActivity extends Activity {
 			};
 
 			for (ImageView view : array) {
-				view.setOnClickListener(listeners[index]);
+				view.setOnClickListener(onClick[index]);
 			}
 
 			index++;

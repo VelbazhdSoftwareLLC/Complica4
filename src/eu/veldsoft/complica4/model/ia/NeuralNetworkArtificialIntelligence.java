@@ -1,7 +1,5 @@
 package eu.veldsoft.complica4.model.ia;
 
-import java.util.Arrays;
-
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
@@ -39,16 +37,22 @@ public class NeuralNetworkArtificialIntelligence extends
 	 * @param minPiece
 	 * @param maxPiece
 	 */
-	public NeuralNetworkArtificialIntelligence(int inputSize, int hiddenSize,
+	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize, int hiddenSize,
 			int outputSize, int minPiece, int maxPiece) {
 		min = minPiece;
 		max = maxPiece;
 
-		net.addLayer(new BasicLayer(null, true, inputSize));
-		net.addLayer(new BasicLayer(new ActivationSigmoid(), true, hiddenSize));
-		net.addLayer(new BasicLayer(new ActivationSigmoid(), false, outputSize));
-		net.getStructure().finalizeStructure();
-		net.reset();
+		if (ann == null) {
+			net.addLayer(new BasicLayer(null, true, inputSize));
+			net.addLayer(new BasicLayer(new ActivationSigmoid(), true,
+					hiddenSize));
+			net.addLayer(new BasicLayer(new ActivationSigmoid(), false,
+					outputSize));
+			net.getStructure().finalizeStructure();
+			net.reset();
+		} else {
+			net = ann;
+		}
 	}
 
 	/**

@@ -1,5 +1,10 @@
 package eu.veldsoft.complica4.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Board {
 	public static final int ROWS = 7;
 
@@ -14,6 +19,8 @@ public class Board {
 	private boolean gameOver = false;
 
 	private Piece pieces[][] = new Piece[COLS][ROWS];
+
+	private List<Example> session = new ArrayList<Example>();
 
 	private boolean hasHorizontalLine(int i, int j) {
 		Piece current = pieces[i][j];
@@ -152,6 +159,47 @@ public class Board {
 		return result;
 	}
 
+	public List<Example> getSession() {
+		return session;
+	}
+
+	public List<Example> getWinnerSession() {
+		List<Example> win = new ArrayList<Example>();
+
+		/*
+		 * There is no winner.
+		 */
+		if (gameOver == false) {
+			return win;
+		}
+
+		/*
+		 * Filtrate winner moves.
+		 */
+		Set<Integer> ids = new HashSet<Integer>();
+		int[][] winners = winners();
+		for (int i = 0; i < pieces.length; i++) {
+			for (int j = 0; j < pieces[i].length; j++) {
+				if (winners[i][j] == 1) {
+					ids.add(pieces[i][j].getId());
+				}
+			}
+		}
+
+		/*
+		 * Fill examples of the winners.
+		 */
+		for (Integer id : ids) {
+			for (int s = 0; s < session.size(); s++) {
+				if (s % NUMBER_OF_PLAYERS == (id - 1)) {
+					win.add(session.get(s));
+				}
+			}
+		}
+
+		return win;
+	}
+
 	public void next() {
 		turn++;
 	}
@@ -164,6 +212,7 @@ public class Board {
 				pieces[i][j] = Piece.EMPTY;
 			}
 		}
+		session.clear();
 	}
 
 	public void addTo(int index, Piece piece) throws RuntimeException {
@@ -179,6 +228,14 @@ public class Board {
 			shift(index);
 		}
 
+		/*
+		 * Store session state.
+		 */
+		session.add(new Example(pieces, piece, index));
+
+		/*
+		 * Do a valid move.
+		 */
 		addTop(index, piece);
 	}
 
