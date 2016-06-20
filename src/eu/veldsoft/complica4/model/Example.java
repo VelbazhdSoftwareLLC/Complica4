@@ -10,6 +10,20 @@ public class Example {
 	public int piece;
 	public int index;
 
+	public Example(int[][] state, int piece, int index) {
+		super();
+		this.piece = piece;
+		this.index = index;
+		this.state = new int[state.length][];
+		for (int i = 0; i < state.length; i++) {
+			this.state[i] = new int[state[i].length];
+			for (int j = 0; j < state[i].length; j++) {
+				this.state[i][j] = state[i][j];
+			}
+		}
+	}
+
+	// TODO Use only one constructor.
 	public Example(Piece[][] state, Piece piece, int index) {
 		super();
 		this.piece = piece.getId();

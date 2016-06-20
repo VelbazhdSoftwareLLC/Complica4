@@ -205,12 +205,12 @@ public class GameActivity extends Activity {
 
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
-//				new NeuralNetworkArtificialIntelligence(
-//						loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
-//						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
-//						Board.COLS * Board.ROWS / 2, Board.COLS,
-//						Piece.getMinId(), Piece.getMaxId()),
-				new SimpleRulesArtificialIntelligence(),
+				new NeuralNetworkArtificialIntelligence(
+						loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
+						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
+						Board.COLS * Board.ROWS / 2, Board.COLS,
+						Piece.getMinId(), Piece.getMaxId()),
+//				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
 
