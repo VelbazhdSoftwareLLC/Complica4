@@ -5,23 +5,62 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Object model of the game board.
+ * 
+ * @author Todor Balabanov
+ */
 public class Board {
+	/**
+	 * Number of rows constant.
+	 */
 	public static final int ROWS = 7;
 
+	/**
+	 * Number of columns constant.
+	 */
 	public static final int COLS = 5;
 
+	/**
+	 * Number of players on the board constant.
+	 */
 	public static final int NUMBER_OF_PLAYERS = 4;
 
+	/**
+	 * Size of the win line constant.
+	 */
 	static final int WIN_LINE_LENGTH = 4;
 
+	/**
+	 * Turns counter.
+	 */
 	private int turn = 0;
 
+	/**
+	 * Game over flag.
+	 */
 	private boolean gameOver = false;
 
+	/**
+	 * Pieces on the board object model.
+	 */
 	private Piece pieces[][] = new Piece[COLS][ROWS];
 
+	/**
+	 * Session history.
+	 */
 	private List<Example> session = new ArrayList<Example>();
 
+	/**
+	 * Check for horizontal win line.
+	 * 
+	 * @param i
+	 *            Start x coordinate.
+	 * @param j
+	 *            Start y coordinate.
+	 * 
+	 * @return True if there is a win line, false otherwise.
+	 */
 	private boolean hasHorizontalLine(int i, int j) {
 		Piece current = pieces[i][j];
 
@@ -41,6 +80,16 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Check for vertical win line.
+	 * 
+	 * @param i
+	 *            Start x coordinate.
+	 * @param j
+	 *            Start y coordinate.
+	 * 
+	 * @return True if there is a win line, false otherwise.
+	 */
 	private boolean hasVerticalLine(int i, int j) {
 		Piece current = pieces[i][j];
 
@@ -60,6 +109,16 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Check for primary diagonal win line.
+	 * 
+	 * @param i
+	 *            Start x coordinate.
+	 * @param j
+	 *            Start y coordinate.
+	 * 
+	 * @return True if there is a win line, false otherwise.
+	 */
 	private boolean hasFirstDiagonalLine(int i, int j) {
 		Piece current = pieces[i][j];
 
@@ -82,6 +141,16 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Check for secondary diagonal win line.
+	 * 
+	 * @param i
+	 *            Start x coordinate.
+	 * @param j
+	 *            Start y coordinate.
+	 * 
+	 * @return True if there is a win line, false otherwise.
+	 */
 	private boolean hasSecondDiagonalLine(int i, int j) {
 		Piece current = pieces[i][j];
 
@@ -104,6 +173,12 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Shift one of the columns one position down.
+	 * 
+	 * @param index
+	 *            Index of the column to be shifted.
+	 */
 	private void shift(int index) {
 		for (int j = pieces[index].length - 1; j > 0; j--) {
 			pieces[index][j] = pieces[index][j - 1];
@@ -111,6 +186,14 @@ public class Board {
 		pieces[index][0] = Piece.EMPTY;
 	}
 
+	/**
+	 * Add piece on the top of the column.
+	 * 
+	 * @param index
+	 *            Index of the column to add to.
+	 * @param piece
+	 *            What kind of piece to be added.
+	 */
 	private void addTop(int index, Piece piece) {
 		int j = -1;
 		for (j = 0; j < pieces[index].length; j++) {
@@ -131,18 +214,38 @@ public class Board {
 		pieces[index][j] = piece;
 	}
 
+	/**
+	 * Current turn getter.
+	 * 
+	 * @return Turn number.
+	 */
 	public int getTurn() {
 		return turn;
 	}
 
+	/**
+	 * Is game over getter.
+	 * 
+	 * @return True if the game is over, false otherwise.
+	 */
 	public boolean isGameOver() {
 		return gameOver;
 	}
 
+	/**
+	 * Pieces on the board getter. Should be implemented as deep copy.
+	 * 
+	 * @return Two dimensional array with the pieces on the board.
+	 */
 	public Piece[][] getPieces() {
 		return pieces;
 	}
 
+	/**
+	 * State of the board getter.
+	 * 
+	 * @return Two dimensional array with the state of the board as integer numbers.
+	 */
 	public int[][] getState() {
 		int result[][] = new int[pieces.length][];
 
@@ -159,10 +262,20 @@ public class Board {
 		return result;
 	}
 
+	/**
+	 * Session history getter.
+	 * 
+	 * @return All moves played. 
+	 */
 	public List<Example> getSession() {
 		return session;
 	}
 
+	/**
+	 * Session history of the winner.
+	 * 
+	 * @return Moves only done by the winner.
+	 */
 	public List<Example> getWinnerSession() {
 		List<Example> win = new ArrayList<Example>();
 
