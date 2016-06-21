@@ -1,4 +1,4 @@
-package HistoryDatabaseHelper;
+package eu.veldsoft.complica4.storage;
 
 import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Util;
