@@ -176,28 +176,28 @@ public class Board {
 	/**
 	 * Shift one of the columns one position down.
 	 * 
-	 * @param index
+	 * @param colunm
 	 *            Index of the column to be shifted.
 	 */
-	private void shift(int index) {
-		for (int j = pieces[index].length - 1; j > 0; j--) {
-			pieces[index][j] = pieces[index][j - 1];
+	private void shift(int colunm) {
+		for (int j = pieces[colunm].length - 1; j > 0; j--) {
+			pieces[colunm][j] = pieces[colunm][j - 1];
 		}
-		pieces[index][0] = Piece.EMPTY;
+		pieces[colunm][0] = Piece.EMPTY;
 	}
 
 	/**
 	 * Add piece on the top of the column.
 	 * 
-	 * @param index
+	 * @param colunm
 	 *            Index of the column to add to.
 	 * @param piece
 	 *            What kind of piece to be added.
 	 */
-	private void addTop(int index, Piece piece) {
+	private void addTop(int colunm, Piece piece) {
 		int j = -1;
-		for (j = 0; j < pieces[index].length; j++) {
-			if (pieces[index][j] != Piece.EMPTY) {
+		for (j = 0; j < pieces[colunm].length; j++) {
+			if (pieces[colunm][j] != Piece.EMPTY) {
 				j--;
 				break;
 			}
@@ -207,11 +207,11 @@ public class Board {
 		 * If the column is empty.
 		 */
 		// TODO Do it with exception.
-		if (j == pieces[index].length) {
-			j = pieces[index].length - 1;
+		if (j == pieces[colunm].length) {
+			j = pieces[colunm].length - 1;
 		}
 
-		pieces[index][j] = piece;
+		pieces[colunm][j] = piece;
 	}
 
 	/**
@@ -244,7 +244,8 @@ public class Board {
 	/**
 	 * State of the board getter.
 	 * 
-	 * @return Two dimensional array with the state of the board as integer numbers.
+	 * @return Two dimensional array with the state of the board as integer
+	 *         numbers.
 	 */
 	public int[][] getState() {
 		int result[][] = new int[pieces.length][];
@@ -265,7 +266,7 @@ public class Board {
 	/**
 	 * Session history getter.
 	 * 
-	 * @return All moves played. 
+	 * @return All moves played.
 	 */
 	public List<Example> getSession() {
 		return session;
@@ -305,7 +306,9 @@ public class Board {
 		for (Integer id : ids) {
 			for (int s = 0; s < session.size(); s++) {
 				if (s % NUMBER_OF_PLAYERS == (id - 1)) {
-					win.add(session.get(s));
+					Example example = session.get(s);
+					example.rank = session.size();
+					win.add(example);
 				}
 			}
 		}
@@ -328,28 +331,29 @@ public class Board {
 		session.clear();
 	}
 
-	public void addTo(int index, Piece piece) throws RuntimeException {
-		if (index < 0 || index >= COLS) {
-			throw new RuntimeException("Invalid column: " + index);
+	public void addTo(int colunm, Piece piece) throws RuntimeException {
+		if (colunm < 0 || colunm >= COLS) {
+			throw new RuntimeException("Invalid column: " + colunm);
 		}
 
 		if (piece == Piece.EMPTY) {
 			throw new RuntimeException("Invalid move.");
 		}
 
-		if (pieces[index][0] != Piece.EMPTY) {
-			shift(index);
+		if (pieces[colunm][0] != Piece.EMPTY) {
+			shift(colunm);
 		}
 
 		/*
-		 * Store session state.
+		 * Store session state. The example rank is unknown at this point in
+		 * time.
 		 */
-		session.add(new Example(pieces, piece, index));
+		session.add(new Example(pieces, piece, colunm, 0));
 
 		/*
 		 * Do a valid move.
 		 */
-		addTop(index, piece);
+		addTop(colunm, piece);
 	}
 
 	public boolean hasWinner() {

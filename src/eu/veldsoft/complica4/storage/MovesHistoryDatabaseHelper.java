@@ -4,6 +4,7 @@ import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Util;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -22,7 +23,8 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	public static abstract class MovesHistoryColumns implements BaseColumns {
 		public static final String TABLE_NAME = "history";
 		public static final String COLUMN_NAME_PIECE = "piece";
-		public static final String COLUMN_NAME_INDEX = "index";
+		public static final String COLUMN_NAME_COLUNM = "colunm";
+		public static final String COLUMN_NAME_RANK = "rank";
 		public static final String COLUMN_NAME_STATE = "state";
 		public static final String COLUMN_NAME_TIME = "time";
 	}
@@ -33,7 +35,8 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	private static final String SQL_CREATE_HISTORY = "CREATE TABLE "
 			+ MovesHistoryColumns.TABLE_NAME + " (" + MovesHistoryColumns._ID
 			+ " INTEGER PRIMARY KEY," + MovesHistoryColumns.COLUMN_NAME_PIECE
-			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_INDEX
+			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_COLUNM
+			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_RANK
 			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_STATE + " TEXT, "
 			+ MovesHistoryColumns.COLUMN_NAME_TIME + " INTEGER)";
 
@@ -100,30 +103,96 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 
-		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(MovesHistoryColumns.COLUMN_NAME_PIECE, move.piece);
-		values.put(MovesHistoryColumns.COLUMN_NAME_INDEX, move.index);
+		values.put(MovesHistoryColumns.COLUMN_NAME_RANK, move.rank);
+		values.put(MovesHistoryColumns.COLUMN_NAME_COLUNM, move.colunm);
 		values.put(MovesHistoryColumns.COLUMN_NAME_STATE, state);
 		values.put(MovesHistoryColumns.COLUMN_NAME_TIME,
 				System.currentTimeMillis() / 1000L);
-		db.insert(MovesHistoryColumns.TABLE_NAME, null, values);
+		getWritableDatabase().insert(MovesHistoryColumns.TABLE_NAME, null,
+				values);
 	}
 
+	/**
+	 * Obtain random example.
+	 * 
+	 * @return Object of randomly selected example.
+	 */
 	public Example retrieveMove() {
-		return retrieveMove(Util.PRNG.nextInt());
+		return retrieveMove(Util.PRNG.nextInt(Integer.MAX_VALUE));
 	}
 
+	/**
+	 * Obtain example at particular position.
+	 * 
+	 * @param position
+	 *            Position on the table.
+	 * 
+	 * @return Object of selected example.
+	 */
 	public Example retrieveMove(int position) {
-		int piece = -1;
-		int index = -1;
-		int state[][] = { {} };
+		if (position < 0) {
+			throw new RuntimeException("Negative index is not possible.");
+		}
 
-		// TODO Implement database read.
+		Cursor cursor = getReadableDatabase().query(
+				MovesHistoryColumns.TABLE_NAME,
+				new String[] { MovesHistoryColumns.COLUMN_NAME_PIECE,
+						MovesHistoryColumns.COLUMN_NAME_COLUNM,
+						MovesHistoryColumns.COLUMN_NAME_RANK,
+						MovesHistoryColumns.COLUMN_NAME_STATE,
+						MovesHistoryColumns.COLUMN_NAME_TIME }, null, null,
+				null, null, MovesHistoryColumns._ID + " ASC", "1");
 
-		return new Example(state, piece, index);
+		/*
+		 * If the database table is empty no example object can be created.
+		 */
+		if (cursor.getCount() == 0) {
+			throw new RuntimeException("Empty database.");
+		}
+
+		/*
+		 * Limit position.
+		 */
+		position %= cursor.getCount();
+
+		/*
+		 * Go to row on a particular position.
+		 */
+		cursor.moveToFirst();
+		for (int p = 0; p < position; p++) {
+			cursor.moveToNext();
+		}
+
+		int piece = cursor.getInt(0);
+		int colunm = cursor.getInt(1);
+		int rank = cursor.getInt(2);
+		String text = cursor.getString(3);
+		cursor.close();
+
+		/*
+		 * Parse state two dimensional array.
+		 */
+		int i = 0;
+		String lines[] = text.split("\\r?\\n");
+		int state[][] = new int[lines.length][];
+		for (String line : lines) {
+			String numbers[] = line.split("\\s+");
+			state[i] = new int[numbers.length];
+			int j = 0;
+			for (String number : numbers) {
+				state[i][j] = Integer.parseInt(number);
+			}
+			i++;
+		}
+
+		return new Example(state, piece, colunm, rank);
 	}
 
+	/**
+	 * Remove useless examples.
+	 */
 	public void removeOldRecords() {
 		// TODO Remove too old records.
 	}

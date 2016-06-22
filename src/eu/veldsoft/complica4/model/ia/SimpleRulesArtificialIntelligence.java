@@ -44,22 +44,22 @@ public class SimpleRulesArtificialIntelligence extends
 	 * 
 	 * @param state
 	 * @param player
-	 * @param index
+	 * @param colunm
 	 */
-	private void tryMove(int[][] state, int player, int index) {
-		if (state[index][0] != 0) {
-			for (int j = state[index].length - 1; j > 0; j--) {
-				state[index][j] = state[index][j - 1];
+	private void tryMove(int[][] state, int player, int colunm) {
+		if (state[colunm][0] != 0) {
+			for (int j = state[colunm].length - 1; j > 0; j--) {
+				state[colunm][j] = state[colunm][j - 1];
 			}
-			state[index][0] = player;
+			state[colunm][0] = player;
 		} else {
 			int j;
-			for (j = 0; j < state[index].length; j++) {
-				if (state[index][j] != 0) {
+			for (j = 0; j < state[colunm].length; j++) {
+				if (state[colunm][j] != 0) {
 					break;
 				}
 			}
-			state[index][j - 1] = player;
+			state[colunm][j - 1] = player;
 		}
 	}
 

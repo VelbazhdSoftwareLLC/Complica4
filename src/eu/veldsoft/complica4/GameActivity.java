@@ -29,8 +29,13 @@ import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
+import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
 public class GameActivity extends Activity {
+	/**
+	 * Database helper reference.
+	 */
+	MovesHistoryDatabaseHelper helper = null;
 
 	/**
 	 * Image references.
@@ -60,6 +65,9 @@ public class GameActivity extends Activity {
 	 */
 	private ArtificialIntelligence bots[] = {};
 
+	/**
+	 * Artificial intelligence object.
+	 */
 	private Runnable botAction = new Runnable() {
 		@Override
 		public void run() {
@@ -142,10 +150,26 @@ public class GameActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Store session of wining training examples.
+	 * 
+	 * @param session
+	 *            List of training examples.
+	 */
 	private void storeTrainingExamples(List<Example> session) {
-		//TODO Store in SQLite database.
+		if (helper == null) {
+			// TODO In more strict implementation exception should be risen.
+			return;
+		}
+
+		for (Example example : session) {
+			helper.storeMove(example);
+		}
 	}
 
+	/**
+	 * Update UI helper function.
+	 */
 	private void updateViews() {
 		Piece values[][] = board.getPieces();
 		for (int i = 0; i < pieces.length; i++) {
@@ -173,11 +197,11 @@ public class GameActivity extends Activity {
 		}
 
 		if (board.isGameOver() == true || board.hasWinner() == true) {
-			/* 
+			/*
 			 * Store winner session in SQLite database.
 			 */
 			storeTrainingExamples(board.getWinnerSession());
-			
+
 			Toast.makeText(this,
 					getResources().getString(R.string.game_over_message),
 					Toast.LENGTH_LONG).show();
@@ -203,6 +227,8 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		helper = new MovesHistoryDatabaseHelper(GameActivity.this);
+
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
 				new NeuralNetworkArtificialIntelligence(
@@ -210,7 +236,7 @@ public class GameActivity extends Activity {
 						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
 						Board.COLS * Board.ROWS / 2, Board.COLS,
 						Piece.getMinId(), Piece.getMaxId()),
-//				new SimpleRulesArtificialIntelligence(),
+				// new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
 
