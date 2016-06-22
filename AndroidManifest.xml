@@ -46,6 +46,12 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+
+        <service
+            android:name=".NetworkTrainingService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

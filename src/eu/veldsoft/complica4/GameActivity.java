@@ -101,28 +101,6 @@ public class GameActivity extends Activity {
 		}
 	};
 
-	/**
-	 * Load ANN from a file.
-	 * 
-	 * @param name
-	 *            File name.
-	 * 
-	 * @return True if the loading is successful, false otherwise.
-	 */
-	private BasicNetwork loadFromFile(String name) {
-		BasicNetwork ann = null;
-
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-					name));
-			ann = (BasicNetwork) in.readObject();
-			in.close();
-		} catch (Exception ex) {
-		}
-
-		return ann;
-	}
-
 	private void startAnimation() {
 		// TODO End animation listener.
 		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -232,7 +210,7 @@ public class GameActivity extends Activity {
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
 				new NeuralNetworkArtificialIntelligence(
-						loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
+						Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
 						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
 						Board.COLS * Board.ROWS / 2, Board.COLS,
 						Piece.getMinId(), Piece.getMaxId()),
@@ -361,7 +339,12 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
+		
+		if (helper != null) {
+			helper.close();
+			helper = null;
+		}
+		
 		sounds.release();
 		sounds = null;
 	}
