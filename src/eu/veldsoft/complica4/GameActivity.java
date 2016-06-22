@@ -1,17 +1,12 @@
 package eu.veldsoft.complica4;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.List;
-
-import org.encog.neural.networks.BasicNetwork;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;

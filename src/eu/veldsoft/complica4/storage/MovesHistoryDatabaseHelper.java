@@ -1,13 +1,13 @@
 package eu.veldsoft.complica4.storage;
 
-import eu.veldsoft.complica4.model.Example;
-import eu.veldsoft.complica4.model.Util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import eu.veldsoft.complica4.model.Example;
+import eu.veldsoft.complica4.model.Util;
 
 /**
  * Database helper class.

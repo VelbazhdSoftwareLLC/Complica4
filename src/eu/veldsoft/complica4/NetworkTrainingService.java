@@ -1,10 +1,10 @@
 package eu.veldsoft.complica4;
 
-import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
 /**
  * Artificial Neural Network training class.
