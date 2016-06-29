@@ -6,6 +6,8 @@ import org.encog.ml.data.basic.BasicMLData;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 
+import eu.veldsoft.complica4.model.Util;
+
 /**
  * Bot based on artificial neural networks.
  * 
@@ -17,12 +19,12 @@ public class NeuralNetworkArtificialIntelligence extends
 	/**
 	 * 
 	 */
-	private int min;
+	private double min;
 
 	/**
 	 * 
 	 */
-	private int max;
+	private double max;
 
 	/**
 	 * Three layer artificial neural network.
@@ -37,19 +39,13 @@ public class NeuralNetworkArtificialIntelligence extends
 	 * @param minPiece
 	 * @param maxPiece
 	 */
-	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize, int hiddenSize,
-			int outputSize, int minPiece, int maxPiece) {
+	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize,
+			int hiddenSize, int outputSize, int minPiece, int maxPiece) {
 		min = minPiece;
 		max = maxPiece;
 
 		if (ann == null) {
-			net.addLayer(new BasicLayer(null, true, inputSize));
-			net.addLayer(new BasicLayer(new ActivationSigmoid(), true,
-					hiddenSize));
-			net.addLayer(new BasicLayer(new ActivationSigmoid(), false,
-					outputSize));
-			net.getStructure().finalizeStructure();
-			net.reset();
+			net = Util.newNetwork(inputSize, hiddenSize, outputSize);
 		} else {
 			net = ann;
 		}
