@@ -289,7 +289,8 @@ public class SimpleRulesArtificialIntelligence extends
 			}
 		}
 
-		// TODO It is better to block three in a row where it will be possible to
+		// TODO It is better to block three in a row where it will be possible
+		// to
 		// form four in a row.
 
 		if (solutions.size() == 0) {

@@ -68,7 +68,7 @@ public class NetworkTrainingService extends Service {
 						.currentTimeMillis(), interval, PendingIntent
 						.getBroadcast(this, Util.ALARM_REQUEST_CODE,
 								new Intent(getApplicationContext(),
-										NetworkTrainingService.class),
+										NetworkTrainingReceiver.class),
 								PendingIntent.FLAG_UPDATE_CURRENT));
 	}
 
@@ -114,6 +114,13 @@ public class NetworkTrainingService extends Service {
 			 */
 			@Override
 			protected Void doInBackground(Void... params) {
+				/*
+				 * If there is no training examples do nothing.
+				 */
+				if (helper.hasMove() == false) {
+					return null;
+				}
+
 				/*
 				 * Load network from a file.
 				 */

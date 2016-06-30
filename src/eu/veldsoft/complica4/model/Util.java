@@ -40,13 +40,16 @@ public class Util {
 	 * Fixed number of examples to be trained in a single training.
 	 */
 	public static final int NUMBER_OF_SINGLE_TRAINING_EXAMPLES = 11;
-	
+
 	/**
 	 * Create new artificial neural network.
 	 * 
-	 * @param inputSize Size of the input layer.
-	 * @param hiddenSize Size of the hidden layer.
-	 * @param outputSize Size of the output layer.
+	 * @param inputSize
+	 *            Size of the input layer.
+	 * @param hiddenSize
+	 *            Size of the hidden layer.
+	 * @param outputSize
+	 *            Size of the output layer.
 	 * 
 	 * @return Neural network created object.
 	 */

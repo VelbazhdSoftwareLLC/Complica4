@@ -1,10 +1,8 @@
 package eu.veldsoft.complica4.model.ia;
 
-import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.neural.networks.BasicNetwork;
-import org.encog.neural.networks.layers.BasicLayer;
 
 import eu.veldsoft.complica4.model.Util;
 

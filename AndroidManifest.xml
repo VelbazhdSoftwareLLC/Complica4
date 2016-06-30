@@ -57,7 +57,7 @@
             android:exported="true" >
             <meta-data
                 android:name="interval"
-                android:value="900000" />
+                android:value="30000" />
             <meta-data
                 android:name="name"
                 android:value="NetworkTrainingService" />

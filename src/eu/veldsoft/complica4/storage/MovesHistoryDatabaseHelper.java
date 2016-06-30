@@ -115,6 +115,26 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Check for at least one move stored into database.
+	 * 
+	 * @return True if there is a move, false otherwise.
+	 */
+	public boolean hasMove() {
+		Cursor cursor = getReadableDatabase().query(
+				MovesHistoryColumns.TABLE_NAME,
+				new String[] { MovesHistoryColumns._ID }, null, null, null,
+				null, null, "1");
+
+		boolean empty = false;
+		if (cursor.getCount() == 0) {
+			empty = true;
+		}
+
+		cursor.close();
+		return !empty;
+	}
+
+	/**
 	 * Obtain random example.
 	 * 
 	 * @return Object of randomly selected example.

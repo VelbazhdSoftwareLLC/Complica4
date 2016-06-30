@@ -200,15 +200,24 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		/*
+		 * Wake-up alarm for network training.
+		 */
+		startService(new Intent(this, NetworkTrainingService.class));
+
+		/*
+		 * Database helper object.
+		 */
 		helper = new MovesHistoryDatabaseHelper(GameActivity.this);
 
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
 				new NeuralNetworkArtificialIntelligence(
-						Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME),
-						Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS,
-						Board.COLS * Board.ROWS / 2, Board.COLS,
-						Piece.getMinId(), Piece.getMaxId()),
+						Util.loadFromFile(getFilesDir() + "/"
+								+ Util.ANN_FILE_NAME), Board.COLS * Board.ROWS
+								+ Board.NUMBER_OF_PLAYERS, Board.COLS
+								* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
+						Piece.getMaxId()),
 				// new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
@@ -334,12 +343,12 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
+
 		if (helper != null) {
 			helper.close();
 			helper = null;
 		}
-		
+
 		sounds.release();
 		sounds = null;
 	}
