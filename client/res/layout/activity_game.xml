@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <ImageView
+        android:id="@+id/background_logo" 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:alpha="1.0"
+        android:src="@drawable/roleri_logo" />
+
+<ImageView android:id="@+id/piece00" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece01" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="70dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece02" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="130dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece03" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="190dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece04" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="250dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece05" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="310dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece06" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="10dp" android:layout_marginTop="370dp" android:src="@drawable/white" />
+
+<ImageView android:id="@+id/piece10" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece11" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="70dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece12" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="130dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece13" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="190dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece14" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="250dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece15" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="310dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece16" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="70dp" android:layout_marginTop="370dp" android:src="@drawable/white" />
+
+<ImageView android:id="@+id/piece20" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece21" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="70dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece22" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="130dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece23" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="190dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece24" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="250dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece25" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="310dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece26" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="130dp" android:layout_marginTop="370dp" android:src="@drawable/white" />
+
+<ImageView android:id="@+id/piece30" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece31" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="70dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece32" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="130dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece33" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="190dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece34" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="250dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece35" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="310dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece36" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="190dp" android:layout_marginTop="370dp" android:src="@drawable/white" />
+
+<ImageView android:id="@+id/piece40" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="10dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece41" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="70dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece42" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="130dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece43" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="190dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece44" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="250dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece45" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="310dp" android:src="@drawable/white" />
+<ImageView android:id="@+id/piece46" android:layout_width="60dp" android:layout_height="60dp" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_marginLeft="250dp" android:layout_marginTop="370dp" android:src="@drawable/white" />
+
+</RelativeLayout>
