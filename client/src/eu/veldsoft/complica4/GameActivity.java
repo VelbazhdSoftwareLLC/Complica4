@@ -2,6 +2,8 @@ package eu.veldsoft.complica4;
 
 import java.util.List;
 
+import org.encog.neural.networks.BasicNetwork;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -210,13 +212,16 @@ public class GameActivity extends Activity {
 		 */
 		helper = new MovesHistoryDatabaseHelper(GameActivity.this);
 
+		BasicNetwork net = null;
+		//TODO net = loadFromServer();
+		if (net == null) {
+			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
+		}
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
-				new NeuralNetworkArtificialIntelligence(
-						Util.loadFromFile(getFilesDir() + "/"
-								+ Util.ANN_FILE_NAME), Board.COLS * Board.ROWS
-								+ Board.NUMBER_OF_PLAYERS, Board.COLS
-								* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
+				new NeuralNetworkArtificialIntelligence(net, Board.COLS
+						* Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
+						* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
 						Piece.getMaxId()),
 				// new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),

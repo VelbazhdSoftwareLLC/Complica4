@@ -42,6 +42,16 @@ public class Util {
 	public static final int NUMBER_OF_SINGLE_TRAINING_EXAMPLES = 11;
 
 	/**
+	 * Consultant ANN object JSON key value.
+	 */
+	public static final String JSON_OBJECT_KEY = "object";
+
+	/**
+	 * Consultant ANN rating JSON key value.
+	 */
+	public static final String JSON_RATING_KEY = "rating";
+
+	/**
 	 * Create new artificial neural network.
 	 * 
 	 * @param inputSize

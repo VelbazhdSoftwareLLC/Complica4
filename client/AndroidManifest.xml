@@ -21,6 +21,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- TODO Add settings dialog with host option. -->
+        <meta-data
+            android:name="host"
+            android:value="complica4.veldsoft.eu" />
+
         <activity
             android:name=".SplashActivity"
             android:label="@string/title_activity_splash"
@@ -61,6 +67,9 @@
             <meta-data
                 android:name="name"
                 android:value="NetworkTrainingService" />
+            <meta-data
+                android:name="save_neural_network_script"
+                android:value="save_neural_network.php" />
         </service>
 
         <receiver

@@ -1,9 +1,24 @@
 package eu.veldsoft.complica4;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -30,9 +45,19 @@ import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
  */
 public class NetworkTrainingService extends Service {
 	/**
-	 * Reference to database helper.
+	 * Database helper object.
 	 */
-	MovesHistoryDatabaseHelper helper = null;
+	private MovesHistoryDatabaseHelper helper = null;
+
+	/**
+	 * Common object between training thread and HTTP communication tread.
+	 */
+	private BasicNetwork storeOnRemote = null;
+
+	/**
+	 * Keep track of ANN error.
+	 */
+	private double annTrainingError = Double.MAX_VALUE;
 
 	/**
 	 * Setup alarm for service activation.
@@ -85,7 +110,10 @@ public class NetworkTrainingService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		helper = new MovesHistoryDatabaseHelper(this);
+
+		if (helper == null) {
+			helper = new MovesHistoryDatabaseHelper(NetworkTrainingService.this);
+		}
 	}
 
 	/**
@@ -115,13 +143,6 @@ public class NetworkTrainingService extends Service {
 			@Override
 			protected Void doInBackground(Void... params) {
 				/*
-				 * If there is no training examples do nothing.
-				 */
-				if (helper == null || helper.hasMove() == false) {
-					return null;
-				}
-
-				/*
 				 * Load network from a file.
 				 */
 				BasicNetwork net = Util.loadFromFile(getFilesDir() + "/"
@@ -145,6 +166,17 @@ public class NetworkTrainingService extends Service {
 						.getInputCount()];
 				double expectedSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
 						.getOutputCount()];
+
+				/*
+				 * If there is no training examples do nothing.
+				 */
+				if (helper == null || helper.hasMove() == false) {
+					return null;
+				}
+
+				/*
+				 * Fill training examples.
+				 */
 				for (int e = 0; e < Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES; e++) {
 					Example example = helper.retrieveMove();
 
@@ -188,11 +220,15 @@ public class NetworkTrainingService extends Service {
 					inputSet[e] = input;
 					expectedSet[e] = expected;
 				}
+
+				/*
+				 * Build training data set.
+				 */
 				MLDataSet trainingSet = new BasicMLDataSet(inputSet,
 						expectedSet);
 
 				/*
-				 * Train network.
+				 * a Train network.
 				 */
 				ResilientPropagation train = new ResilientPropagation(net,
 						trainingSet);
@@ -203,11 +239,93 @@ public class NetworkTrainingService extends Service {
 				 * Save network to a file.
 				 */
 				Util.saveToFile(net, getFilesDir() + "/" + Util.ANN_FILE_NAME);
+				annTrainingError = net.calculateError(trainingSet);
+				storeOnRemote = net;
 
 				/*
 				 * Stop service.
 				 */
 				NetworkTrainingService.this.stopSelf();
+				return null;
+			}
+		}).execute();
+
+		/*
+		 * Save network to the remote server.
+		 */
+		(new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				/*
+				 * Nothing to report.
+				 */
+				while (storeOnRemote == null) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+					}
+				}
+
+				// TODO Do not report if local ANN is worse than the best remote
+				// ANN.
+				// if(annTrainingError > ) {
+				// storeOnRemote = null;
+				// return null;
+				// }
+
+				String host = "";
+				try {
+					host = getPackageManager().getApplicationInfo(
+							NetworkTrainingService.this.getPackageName(),
+							PackageManager.GET_META_DATA).metaData
+							.getString("host");
+				} catch (NameNotFoundException exception) {
+					System.err.println(exception);
+					return null;
+				}
+
+				String script = "";
+				try {
+					script = getPackageManager().getServiceInfo(
+							new ComponentName(NetworkTrainingService.this,
+									NetworkTrainingService.this.getClass()),
+							PackageManager.GET_SERVICES
+									| PackageManager.GET_META_DATA).metaData
+							.getString("save_neural_network_script");
+				} catch (NameNotFoundException exception) {
+					System.err.println(exception);
+					return null;
+				}
+
+				HttpClient client = new DefaultHttpClient();
+				client.getParams().setParameter(
+						"http.protocol.content-charset", "UTF-8");
+				HttpPost post = new HttpPost("http://" + host + "/" + script);
+
+				JSONObject json = new JSONObject();
+				try {
+					json.put(Util.JSON_OBJECT_KEY, storeOnRemote);
+					json.put(Util.JSON_RATING_KEY, annTrainingError);
+				} catch (JSONException exception) {
+					System.err.println(exception);
+				}
+
+				List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+				pairs.add(new BasicNameValuePair("request", json.toString()));
+				try {
+					post.setEntity(new UrlEncodedFormEntity(pairs));
+				} catch (UnsupportedEncodingException exception) {
+					System.err.println(exception);
+				}
+
+				try {
+					HttpResponse response = client.execute(post);
+				} catch (ClientProtocolException exception) {
+					System.err.println(exception);
+				} catch (IOException exception) {
+					System.err.println(exception);
+				}
+
 				return null;
 			}
 		}).execute();
@@ -220,10 +338,14 @@ public class NetworkTrainingService extends Service {
 	 */
 	@Override
 	public void onDestroy() {
+		/*
+		 * Close SQLite database connection.
+		 */
 		if (helper != null) {
 			helper.close();
 			helper = null;
 		}
+
 		super.onDestroy();
 	}
 
