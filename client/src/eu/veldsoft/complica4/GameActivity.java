@@ -28,6 +28,10 @@ import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
 import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
+/**
+ * 
+ * @author Todor Balabanov
+ */
 public class GameActivity extends Activity {
 	/**
 	 * Database helper reference.
@@ -44,12 +48,24 @@ public class GameActivity extends Activity {
 	 */
 	private View.OnClickListener onClick[] = new View.OnClickListener[Board.COLS];
 
+	/**
+	 * 
+	 */
 	private final Handler handler = new Handler();
 
+	/**
+	 * 
+	 */
 	private SoundPool sounds = null;
 
+	/**
+	 * 
+	 */
 	private int clickId = -1;
 
+	/**
+	 * 
+	 */
 	private int finishId = -1;
 
 	/**
@@ -98,6 +114,9 @@ public class GameActivity extends Activity {
 		}
 	};
 
+	/**
+	 * 
+	 */
 	private void startAnimation() {
 		// TODO End animation listener.
 		Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -197,6 +216,9 @@ public class GameActivity extends Activity {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -219,11 +241,11 @@ public class GameActivity extends Activity {
 		}
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
-				new NeuralNetworkArtificialIntelligence(net, Board.COLS
-						* Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
-						* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
-						Piece.getMaxId()),
-				// new SimpleRulesArtificialIntelligence(),
+//				new NeuralNetworkArtificialIntelligence(net, Board.COLS
+//						* Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
+//						* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
+//						Piece.getMaxId()),
+				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
 
