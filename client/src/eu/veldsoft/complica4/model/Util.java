@@ -50,7 +50,7 @@ public class Util {
 	 * Consultant ANN rating JSON key value.
 	 */
 	public static final String JSON_RATING_KEY = "rating";
-
+	
 	/**
 	 * Create new artificial neural network.
 	 * 

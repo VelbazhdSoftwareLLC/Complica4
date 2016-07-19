@@ -7,12 +7,14 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
@@ -95,6 +97,67 @@ public class NetworkTrainingService extends Service {
 								new Intent(getApplicationContext(),
 										NetworkTrainingReceiver.class),
 								PendingIntent.FLAG_UPDATE_CURRENT));
+	}
+
+	/**
+	 * Connect to the remote server and check the best known error.
+	 * 
+	 * @return The best remote error if such was found or max double otherwise.
+	 */
+	private double obtainRemoveBestError() {
+		String host = "";
+		try {
+			host = getPackageManager().getApplicationInfo(
+					NetworkTrainingService.this.getPackageName(),
+					PackageManager.GET_META_DATA).metaData.getString("host");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return Double.MAX_VALUE;
+		}
+
+		String script = "";
+		try {
+			script = getPackageManager().getServiceInfo(
+					new ComponentName(NetworkTrainingService.this,
+							NetworkTrainingService.this.getClass()),
+					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
+					.getString("best_rating_script");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return Double.MAX_VALUE;
+		}
+
+		HttpClient client = new DefaultHttpClient();
+		client.getParams().setParameter("http.protocol.content-charset",
+				"UTF-8");
+		HttpPost post = new HttpPost("http://" + host + "/" + script);
+
+		JSONObject json = new JSONObject();
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("best_rating", json.toString()));
+		try {
+			post.setEntity(new UrlEncodedFormEntity(pairs));
+		} catch (UnsupportedEncodingException exception) {
+			System.err.println(exception);
+		}
+
+		double error = Double.MAX_VALUE;
+		try {
+			HttpResponse response = client.execute(post);
+			JSONObject result = new JSONObject(EntityUtils.toString(
+					response.getEntity(), "UTF-8"));
+			error = result.getDouble(Util.JSON_RATING_KEY);
+		} catch (ClientProtocolException exception) {
+			System.err.println(exception);
+		} catch (IOException exception) {
+			System.err.println(exception);
+		} catch (ParseException exception) {
+			System.err.println(exception);
+		} catch (JSONException exception) {
+			System.err.println(exception);
+		}
+
+		return error;
 	}
 
 	/**
@@ -266,12 +329,13 @@ public class NetworkTrainingService extends Service {
 					}
 				}
 
-				// TODO Do not report if local ANN is worse than the best remote
-				// ANN.
-				// if(annTrainingError > ) {
-				// storeOnRemote = null;
-				// return null;
-				// }
+				/*
+				 * Do not report if local ANN is worse than the best remote ANN.
+				 */
+				if (annTrainingError > obtainRemoveBestError()) {
+					storeOnRemote = null;
+					return null;
+				}
 
 				String host = "";
 				try {
@@ -311,7 +375,8 @@ public class NetworkTrainingService extends Service {
 				}
 
 				List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-				pairs.add(new BasicNameValuePair("request", json.toString()));
+				pairs.add(new BasicNameValuePair("save_neural_network", json
+						.toString()));
 				try {
 					post.setEntity(new UrlEncodedFormEntity(pairs));
 				} catch (UnsupportedEncodingException exception) {

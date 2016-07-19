@@ -12,7 +12,7 @@ if(isset($_POST['best_rating'])) {
     $response = array( 'rating' => ''.$result[0][0] );
   } else {
     //TODO Use named constant instead number.
-    $response = array( 'rating' => '1000000' );
+    $response = array( 'rating' => ''.PHP_INT_MAX );
   }
   close_my_db();
 
