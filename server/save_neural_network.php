@@ -11,7 +11,7 @@ if(isset($_POST['save_neural_network'])) {
     }
 
     /*
-     * There is no way to escape symbols in Java serialized object.
+     * There is no way to escape symbols in Java serialized object safely.
      */
     if($key == 'object') {
       $object = $value;

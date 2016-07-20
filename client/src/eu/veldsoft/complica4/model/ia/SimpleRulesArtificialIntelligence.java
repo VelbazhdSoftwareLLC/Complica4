@@ -7,25 +7,28 @@ import java.util.List;
 import eu.veldsoft.complica4.model.Util;
 
 /**
+ * A.I. based on simple if-then-else rules.
  * 
  * @author Todor Balabanov
  */
 public class SimpleRulesArtificialIntelligence extends
 		AbstractArtificialIntelligence {
 	/**
-	 * 
+	 * Board state matrix.
 	 */
 	private int[][] state = null;
 
 	/**
-	 * 
+	 * Player identifier.
 	 */
 	private int player = -1;
 
 	/**
+	 * Deep copy of the board.
 	 * 
 	 * @param original
-	 * @return
+	 *            Original board.
+	 * @return Copy of the original board.
 	 */
 	private int[][] copy(int[][] original) {
 		int[][] result = new int[original.length][];
@@ -41,10 +44,14 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Try to do a move.
 	 * 
 	 * @param state
+	 *            Board state.
 	 * @param player
+	 *            Player identifier.
 	 * @param colunm
+	 *            Column to be played.
 	 */
 	private void tryMove(int[][] state, int player, int colunm) {
 		if (state[colunm][0] != 0) {
@@ -64,10 +71,14 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Check if the particular player is a winner.
 	 * 
 	 * @param state
+	 *            Board state.
 	 * @param player
-	 * @return
+	 *            Player identifier.
+	 * 
+	 * @return True if the player is a winner, false otherwise.
 	 */
 	private boolean isWinner(int[][] state, int player) {
 		for (int i = 0, k; i < state.length; i++) {
@@ -232,9 +243,9 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Try to add one in order to win directly.
 	 * 
-	 * @param result
-	 * @return
+	 * @return Column to be played if there is a proper option, -1 otherwise.
 	 */
 	private int addOneAndWin() {
 		/*
@@ -252,8 +263,9 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Try to add one in order to block direct win of a opponent.
 	 * 
-	 * @return
+	 * @return Column to be played if there is a proper option, -1 otherwise.
 	 */
 	private int addOneAndBlockOtherToWin() {
 		/*

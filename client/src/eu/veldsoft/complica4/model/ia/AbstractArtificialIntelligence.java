@@ -1,11 +1,11 @@
 package eu.veldsoft.complica4.model.ia;
 
 /**
+ * Abstract A.I. clase. It is used as parent of the real A.I. classes.
  * 
  * @author Todor Balabanov
  */
 abstract class AbstractArtificialIntelligence implements ArtificialIntelligence {
-
 	/**
 	 * {@inheritDoc}
 	 */

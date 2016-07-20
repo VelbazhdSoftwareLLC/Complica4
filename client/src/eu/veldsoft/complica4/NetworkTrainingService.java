@@ -62,6 +62,11 @@ public class NetworkTrainingService extends Service {
 	private double annTrainingError = Double.MAX_VALUE;
 
 	/**
+	 * Network reference to be trained.
+	 */
+	BasicNetwork net = null;
+
+	/**
 	 * Setup alarm for service activation.
 	 */
 	private void setupAlarm() {
@@ -160,6 +165,238 @@ public class NetworkTrainingService extends Service {
 		return error;
 	}
 
+	private void loadNetwork() {
+		/*
+		 * Start network loading by disconnect the reference from the previous
+		 * object if there is any.
+		 */
+		net = null;
+
+		/*
+		 * Load network from a remote server.
+		 */
+		String host = "";
+		try {
+			host = getPackageManager().getApplicationInfo(
+					NetworkTrainingService.this.getPackageName(),
+					PackageManager.GET_META_DATA).metaData.getString("host");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return;
+		}
+
+		String script = "";
+		try {
+			script = getPackageManager().getServiceInfo(
+					new ComponentName(NetworkTrainingService.this,
+							NetworkTrainingService.this.getClass()),
+					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
+					.getString("load_neural_network_script");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return;
+		}
+
+		HttpClient client = new DefaultHttpClient();
+		client.getParams().setParameter("http.protocol.content-charset",
+				"UTF-8");
+		HttpPost post = new HttpPost("http://" + host + "/" + script);
+
+		JSONObject json = new JSONObject();
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("load_neural_network", json.toString()));
+		try {
+			post.setEntity(new UrlEncodedFormEntity(pairs));
+		} catch (UnsupportedEncodingException exception) {
+			System.err.println(exception);
+		}
+
+		try {
+			HttpResponse response = client.execute(post);
+			JSONObject result = new JSONObject(EntityUtils.toString(
+					response.getEntity(), "UTF-8"));
+			if (result.getBoolean(Util.JSON_FOUND_KEY) == true) {
+				net = (BasicNetwork) result.get(Util.JSON_OBJECT_KEY);
+			}
+		} catch (ClientProtocolException exception) {
+			net = null;
+			System.err.println(exception);
+		} catch (IOException exception) {
+			net = null;
+			System.err.println(exception);
+		} catch (ParseException exception) {
+			net = null;
+			System.err.println(exception);
+		} catch (JSONException exception) {
+			net = null;
+			System.err.println(exception);
+		}
+
+		/*
+		 * Load network from a file.
+		 */
+		if (net == null) {
+			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
+		}
+
+		/*
+		 * Create new network if there is no network in the file.
+		 */
+		if (net == null) {
+			net = Util.newNetwork(Board.COLS * Board.ROWS
+					+ Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS / 2,
+					Board.COLS);
+		}
+	}
+
+	private double trainNetwork() {
+		/*
+		 * Form training set.
+		 */
+		double min = Piece.minId();
+		double max = Piece.maxId();
+		double inputSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
+				.getInputCount()];
+		double expectedSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
+				.getOutputCount()];
+
+		/*
+		 * If there is no training examples do nothing.
+		 */
+		if (helper == null || helper.hasMove() == false) {
+			return Double.MAX_VALUE;
+		}
+
+		/*
+		 * Fill training examples.
+		 */
+		for (int e = 0; e < Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES; e++) {
+			Example example = helper.retrieveMove();
+
+			/*
+			 * Scale input in the range of [0.0-1.0].
+			 */
+			double input[] = new double[net.getInputCount()];
+			for (int i = 0, k = 0; i < example.state.length; i++) {
+				for (int j = 0; j < example.state[i].length; j++, k++) {
+					input[k] = (example.state[i][j] - min) / (max - min);
+				}
+			}
+
+			/*
+			 * Mark the player who is playing.
+			 */
+			for (int i = input.length - Board.NUMBER_OF_PLAYERS, p = 1; i < input.length; i++, p++) {
+				if (example.piece == p) {
+					input[i] = 1;
+				} else {
+					input[i] = 0;
+				}
+			}
+
+			/*
+			 * Mark the column to playing.
+			 */
+			double expected[] = new double[net.getOutputCount()];
+			for (int i = 0; i < expected.length; i++) {
+				if (example.colunm == i) {
+					expected[i] = 1;
+				} else {
+					expected[i] = 0;
+				}
+			}
+
+			/*
+			 * For training pair.
+			 */
+			inputSet[e] = input;
+			expectedSet[e] = expected;
+		}
+
+		/*
+		 * Build training data set.
+		 */
+		MLDataSet trainingSet = new BasicMLDataSet(inputSet, expectedSet);
+
+		/*
+		 * Train network.
+		 */
+		ResilientPropagation train = new ResilientPropagation(net, trainingSet);
+		train.iteration();
+		train.finishTraining();
+
+		return net.calculateError(trainingSet);
+	}
+
+	private void saveNetwork() {
+		/*
+		 * Save network to a file.
+		 */
+		Util.saveToFile(net, getFilesDir() + "/" + Util.ANN_FILE_NAME);
+
+		/*
+		 * Do not report if local ANN is worse than the best remote ANN.
+		 */
+		if (annTrainingError > obtainRemoveBestError()) {
+			storeOnRemote = null;
+			return;
+		}
+
+		/*
+		 * Save network to a remote server.
+		 */
+		String host = "";
+		try {
+			host = getPackageManager().getApplicationInfo(
+					NetworkTrainingService.this.getPackageName(),
+					PackageManager.GET_META_DATA).metaData.getString("host");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return;
+		}
+
+		String script = "";
+		try {
+			script = getPackageManager().getServiceInfo(
+					new ComponentName(NetworkTrainingService.this,
+							NetworkTrainingService.this.getClass()),
+					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
+					.getString("save_neural_network_script");
+		} catch (NameNotFoundException exception) {
+			System.err.println(exception);
+			return;
+		}
+
+		HttpClient client = new DefaultHttpClient();
+		client.getParams().setParameter("http.protocol.content-charset",
+				"UTF-8");
+		HttpPost post = new HttpPost("http://" + host + "/" + script);
+
+		JSONObject json = new JSONObject();
+		try {
+			json.put(Util.JSON_OBJECT_KEY, storeOnRemote);
+			json.put(Util.JSON_RATING_KEY, annTrainingError);
+		} catch (JSONException exception) {
+			System.err.println(exception);
+		}
+
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("save_neural_network", json.toString()));
+		try {
+			post.setEntity(new UrlEncodedFormEntity(pairs));
+		} catch (UnsupportedEncodingException exception) {
+			System.err.println(exception);
+		}
+
+		try {
+			HttpResponse response = client.execute(post);
+		} catch (ClientProtocolException exception) {
+			System.err.println(exception);
+		} catch (IOException exception) {
+			System.err.println(exception);
+		}
+	}
+
 	/**
 	 * Service constructor.
 	 */
@@ -205,192 +442,17 @@ public class NetworkTrainingService extends Service {
 			 */
 			@Override
 			protected Void doInBackground(Void... params) {
-				/*
-				 * Load network from a file.
-				 */
-				BasicNetwork net = Util.loadFromFile(getFilesDir() + "/"
-						+ Util.ANN_FILE_NAME);
+				loadNetwork();
 
-				/*
-				 * Create new network if there is no network in the file.
-				 */
-				if (net == null) {
-					net = Util.newNetwork(Board.COLS * Board.ROWS
-							+ Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS
-							/ 2, Board.COLS);
-				}
-
-				/*
-				 * Form training set.
-				 */
-				double min = Piece.getMinId();
-				double max = Piece.getMaxId();
-				double inputSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
-						.getInputCount()];
-				double expectedSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
-						.getOutputCount()];
-
-				/*
-				 * If there is no training examples do nothing.
-				 */
-				if (helper == null || helper.hasMove() == false) {
-					return null;
-				}
-
-				/*
-				 * Fill training examples.
-				 */
-				for (int e = 0; e < Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES; e++) {
-					Example example = helper.retrieveMove();
-
-					/*
-					 * Scale input in the range of [0.0-1.0].
-					 */
-					double input[] = new double[net.getInputCount()];
-					for (int i = 0, k = 0; i < example.state.length; i++) {
-						for (int j = 0; j < example.state[i].length; j++, k++) {
-							input[k] = (example.state[i][j] - min)
-									/ (max - min);
-						}
-					}
-
-					/*
-					 * Mark the player who is playing.
-					 */
-					for (int i = input.length - Board.NUMBER_OF_PLAYERS, p = 1; i < input.length; i++, p++) {
-						if (example.piece == p) {
-							input[i] = 1;
-						} else {
-							input[i] = 0;
-						}
-					}
-
-					/*
-					 * Mark the column to playing.
-					 */
-					double expected[] = new double[net.getOutputCount()];
-					for (int i = 0; i < expected.length; i++) {
-						if (example.colunm == i) {
-							expected[i] = 1;
-						} else {
-							expected[i] = 0;
-						}
-					}
-
-					/*
-					 * For training pair.
-					 */
-					inputSet[e] = input;
-					expectedSet[e] = expected;
-				}
-
-				/*
-				 * Build training data set.
-				 */
-				MLDataSet trainingSet = new BasicMLDataSet(inputSet,
-						expectedSet);
-
-				/*
-				 * a Train network.
-				 */
-				ResilientPropagation train = new ResilientPropagation(net,
-						trainingSet);
-				train.iteration();
-				train.finishTraining();
-
-				/*
-				 * Save network to a file.
-				 */
-				Util.saveToFile(net, getFilesDir() + "/" + Util.ANN_FILE_NAME);
-				annTrainingError = net.calculateError(trainingSet);
+				annTrainingError = trainNetwork();
 				storeOnRemote = net;
+
+				saveNetwork();
 
 				/*
 				 * Stop service.
 				 */
 				NetworkTrainingService.this.stopSelf();
-				return null;
-			}
-		}).execute();
-
-		/*
-		 * Save network to the remote server.
-		 */
-		(new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				/*
-				 * Nothing to report.
-				 */
-				while (storeOnRemote == null) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-					}
-				}
-
-				/*
-				 * Do not report if local ANN is worse than the best remote ANN.
-				 */
-				if (annTrainingError > obtainRemoveBestError()) {
-					storeOnRemote = null;
-					return null;
-				}
-
-				String host = "";
-				try {
-					host = getPackageManager().getApplicationInfo(
-							NetworkTrainingService.this.getPackageName(),
-							PackageManager.GET_META_DATA).metaData
-							.getString("host");
-				} catch (NameNotFoundException exception) {
-					System.err.println(exception);
-					return null;
-				}
-
-				String script = "";
-				try {
-					script = getPackageManager().getServiceInfo(
-							new ComponentName(NetworkTrainingService.this,
-									NetworkTrainingService.this.getClass()),
-							PackageManager.GET_SERVICES
-									| PackageManager.GET_META_DATA).metaData
-							.getString("save_neural_network_script");
-				} catch (NameNotFoundException exception) {
-					System.err.println(exception);
-					return null;
-				}
-
-				HttpClient client = new DefaultHttpClient();
-				client.getParams().setParameter(
-						"http.protocol.content-charset", "UTF-8");
-				HttpPost post = new HttpPost("http://" + host + "/" + script);
-
-				JSONObject json = new JSONObject();
-				try {
-					json.put(Util.JSON_OBJECT_KEY, storeOnRemote);
-					json.put(Util.JSON_RATING_KEY, annTrainingError);
-				} catch (JSONException exception) {
-					System.err.println(exception);
-				}
-
-				List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-				pairs.add(new BasicNameValuePair("save_neural_network", json
-						.toString()));
-				try {
-					post.setEntity(new UrlEncodedFormEntity(pairs));
-				} catch (UnsupportedEncodingException exception) {
-					System.err.println(exception);
-				}
-
-				try {
-					HttpResponse response = client.execute(post);
-				} catch (ClientProtocolException exception) {
-					System.err.println(exception);
-				} catch (IOException exception) {
-					System.err.println(exception);
-				}
-
 				return null;
 			}
 		}).execute();
