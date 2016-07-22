@@ -1,10 +1,18 @@
 package eu.veldsoft.complica4;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -219,7 +227,12 @@ public class NetworkTrainingService extends Service {
 			JSONObject result = new JSONObject(EntityUtils.toString(
 					response.getEntity(), "UTF-8"));
 			if (result.getBoolean(Util.JSON_FOUND_KEY) == true) {
-				net = (BasicNetwork) result.get(Util.JSON_OBJECT_KEY);
+				ByteArrayInputStream bytes = new ByteArrayInputStream(result.get(Util.JSON_OBJECT_KEY).toString().getBytes());
+				ObjectInputStream in = new ObjectInputStream(
+						bytes);
+				//TODO Need extensive testing.
+				net = (BasicNetwork) in.readObject();
+				in.close();
 			}
 		} catch (ClientProtocolException exception) {
 			net = null;
@@ -231,6 +244,9 @@ public class NetworkTrainingService extends Service {
 			net = null;
 			System.err.println(exception);
 		} catch (JSONException exception) {
+			net = null;
+			System.err.println(exception);
+		} catch (ClassNotFoundException exception) {
 			net = null;
 			System.err.println(exception);
 		}
@@ -386,9 +402,16 @@ public class NetworkTrainingService extends Service {
 
 		JSONObject json = new JSONObject();
 		try {
-			json.put(Util.JSON_OBJECT_KEY, storeOnRemote);
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(
+					bytes);
+			out.writeObject(storeOnRemote);
+			out.close();
+			json.put(Util.JSON_OBJECT_KEY, Base64.encodeBase64String(bytes.toByteArray()));
 			json.put(Util.JSON_RATING_KEY, annTrainingError);
 		} catch (JSONException exception) {
+			System.err.println(exception);
+		} catch (IOException exception) {
 			System.err.println(exception);
 		}
 
