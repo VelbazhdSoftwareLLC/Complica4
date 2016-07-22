@@ -15,12 +15,12 @@ public class NeuralNetworkArtificialIntelligence extends
 		AbstractArtificialIntelligence {
 
 	/**
-	 * 
+	 * Minimum value for normalization.
 	 */
 	private double min;
 
 	/**
-	 * 
+	 * Maximum value for normalization.
 	 */
 	private double max;
 
@@ -30,12 +30,18 @@ public class NeuralNetworkArtificialIntelligence extends
 	private BasicNetwork net = new BasicNetwork();
 
 	/**
+	 * Constructor with all needed parameters.
 	 * 
 	 * @param inputSize
+	 *            Input layer size.
 	 * @param hiddenSize
+	 *            Hidden layer size.
 	 * @param outputSize
+	 *            Output layer size.
 	 * @param minPiece
+	 *            Minimum integer identifier of a piece.
 	 * @param maxPiece
+	 *            Maximum integer identifier of a piece.
 	 */
 	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize,
 			int hiddenSize, int outputSize, int minPiece, int maxPiece) {
@@ -50,7 +56,7 @@ public class NeuralNetworkArtificialIntelligence extends
 	}
 
 	/**
-	 * 
+	 * {@inheritDoc}}
 	 */
 	@Override
 	public int move(int[][] state, int player) throws NoValidMoveException {

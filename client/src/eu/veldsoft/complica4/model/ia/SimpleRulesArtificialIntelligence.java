@@ -7,25 +7,28 @@ import java.util.List;
 import eu.veldsoft.complica4.model.Util;
 
 /**
+ * A.I. based on simple if-then-else rules.
  * 
  * @author Todor Balabanov
  */
 public class SimpleRulesArtificialIntelligence extends
 		AbstractArtificialIntelligence {
 	/**
-	 * 
+	 * Board state matrix.
 	 */
 	private int[][] state = null;
 
 	/**
-	 * 
+	 * Player identifier.
 	 */
 	private int player = -1;
 
 	/**
+	 * Deep copy of the board.
 	 * 
 	 * @param original
-	 * @return
+	 *            Original board.
+	 * @return Copy of the original board.
 	 */
 	private int[][] copy(int[][] original) {
 		int[][] result = new int[original.length][];
@@ -41,10 +44,14 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Try to do a move.
 	 * 
 	 * @param state
+	 *            Board state.
 	 * @param player
+	 *            Player identifier.
 	 * @param colunm
+	 *            Column to be played.
 	 */
 	private void tryMove(int[][] state, int player, int colunm) {
 		if (state[colunm][0] != 0) {
@@ -64,10 +71,14 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Check if the particular player is a winner.
 	 * 
 	 * @param state
+	 *            Board state.
 	 * @param player
-	 * @return
+	 *            Player identifier.
+	 * 
+	 * @return True if the player is a winner, false otherwise.
 	 */
 	private boolean isWinner(int[][] state, int player) {
 		for (int i = 0, k; i < state.length; i++) {
@@ -116,12 +127,16 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Check for combination of three pieces in a row.
 	 * 
 	 * @param nextState
+	 *            Next state of the board.
 	 * @param player
-	 * @return
+	 *            Index of the player.
+	 * 
+	 * @return True if there is three pieces in a row, false otherwise.
 	 */
-	private boolean hasSubWinRow(int[][] nextState, int player) {
+	private boolean hasThreeInRow(int[][] nextState, int player) {
 		int subLineLength = WIN_LINE_LENGTH - 1;
 
 		for (int i = 0, k; i < state.length; i++) {
@@ -170,9 +185,67 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Check for combination of three pieces in a row.
 	 * 
-	 * @param result
-	 * @return
+	 * @param nextState
+	 *            Next state of the board.
+	 * @param player
+	 *            Index of the player.
+	 * 
+	 * @return True if there is three pieces in a row, false otherwise.
+	 */
+	private boolean hasTwoInRow(int[][] nextState, int player) {
+		int subLineLength = WIN_LINE_LENGTH - 2;
+
+		for (int i = 0, k; i < state.length; i++) {
+			for (int j = 0; j < state[i].length; j++) {
+				for (k = 0; k < subLineLength && (i + k) < state.length; k++) {
+					if (state[i + k][j] != player) {
+						break;
+					}
+				}
+				if (k == subLineLength) {
+					return true;
+				}
+
+				for (k = 0; k < subLineLength && (j + k) < state[i].length; k++) {
+					if (state[i][j + k] != player) {
+						break;
+					}
+				}
+				if (k == subLineLength) {
+					return true;
+				}
+
+				for (k = 0; k < subLineLength && (i + k) < state.length
+						&& (j + k) < state[i].length; k++) {
+					if (state[i + k][j + k] != player) {
+						break;
+					}
+				}
+				if (k == subLineLength) {
+					return true;
+				}
+
+				for (k = 0; k < subLineLength && (i - k) >= 0
+						&& (j + k) < state[i].length; k++) {
+					if (state[i - k][j + k] != player) {
+						break;
+					}
+				}
+				if (k == subLineLength) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Try to add one in order to win directly.
+	 * 
+	 * @return Column to be played if there is a proper option, -1 otherwise.
 	 */
 	private int addOneAndWin() {
 		/*
@@ -190,8 +263,9 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Try to add one in order to block direct win of a opponent.
 	 * 
-	 * @return
+	 * @return Column to be played if there is a proper option, -1 otherwise.
 	 */
 	private int addOneAndBlockOtherToWin() {
 		/*
@@ -227,6 +301,7 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Add one piece in order to to form three pieces in a row.
 	 * 
 	 * @return Index of a column to play or -1 if rule is not applicable.
 	 */
@@ -238,7 +313,7 @@ public class SimpleRulesArtificialIntelligence extends
 		for (int i = 0; i < state.length; i++) {
 			int[][] nextState = copy(state);
 			tryMove(nextState, player, i);
-			if (hasSubWinRow(nextState, player) == true) {
+			if (hasThreeInRow(nextState, player) == true) {
 				solutions.add(i);
 			}
 		}
@@ -255,6 +330,7 @@ public class SimpleRulesArtificialIntelligence extends
 	}
 
 	/**
+	 * Add one piece in order to block opponents to form three pieces in a row.
 	 * 
 	 * @return Index of a column to play or -1 if rule is not applicable.
 	 */
@@ -283,14 +359,42 @@ public class SimpleRulesArtificialIntelligence extends
 			for (int i = 0; i < state.length; i++) {
 				int[][] nextState = copy(state);
 				tryMove(nextState, p, i);
-				if (hasSubWinRow(nextState, p) == true) {
+				if (hasThreeInRow(nextState, p) == true) {
 					solutions.add(i);
 				}
 			}
 		}
 
 		// TODO It is better to block three in a row where it will be possible
-		// to
+		// to form four in a row.
+
+		if (solutions.size() == 0) {
+			return -1;
+		} else {
+			Collections.shuffle(solutions);
+			return solutions.get(0);
+		}
+	}
+
+	/**
+	 * Add one piece in order to to form two pieces in a row.
+	 * 
+	 * @return Index of a column to play or -1 if rule is not applicable.
+	 */
+	private int addOneForTwo() {
+		/*
+		 * Try to for three in a row.
+		 */
+		List<Integer> solutions = new ArrayList<Integer>();
+		for (int i = 0; i < state.length; i++) {
+			int[][] nextState = copy(state);
+			tryMove(nextState, player, i);
+			if (hasTwoInRow(nextState, player) == true) {
+				solutions.add(i);
+			}
+		}
+
+		// TODO It is better to form three in a row where it will be possible to
 		// form four in a row.
 
 		if (solutions.size() == 0) {
@@ -299,6 +403,115 @@ public class SimpleRulesArtificialIntelligence extends
 			Collections.shuffle(solutions);
 			return solutions.get(0);
 		}
+	}
+
+	/**
+	 * Add one piece in order to block opponents to form two pieces in a row.
+	 * 
+	 * @return Index of a column to play or -1 if rule is not applicable.
+	 */
+	private int addOneForBlockOtherToFormTwo() {
+		/*
+		 * Put all players in a collection in order to shuffle it.
+		 */
+		List<Integer> ids = new ArrayList<Integer>();
+		for (int p = 1; p <= NUMBER_OF_PLAYERS; p++) {
+			if (p == player) {
+				continue;
+			}
+			ids.add(p);
+		}
+
+		/*
+		 * By shuffling it will not prefer the left most opponent to block.
+		 */
+		Collections.shuffle(ids);
+
+		/*
+		 * Try each opponent for sub-direct win move.
+		 */
+		List<Integer> solutions = new ArrayList<Integer>();
+		for (Integer p : ids) {
+			for (int i = 0; i < state.length; i++) {
+				int[][] nextState = copy(state);
+				tryMove(nextState, p, i);
+				if (hasTwoInRow(nextState, p) == true) {
+					solutions.add(i);
+				}
+			}
+		}
+
+		// TODO It is better to block three in a row where it will be possible
+		// to form four in a row.
+
+		if (solutions.size() == 0) {
+			return -1;
+		} else {
+			Collections.shuffle(solutions);
+			return solutions.get(0);
+		}
+	}
+
+	/**
+	 * Calculate pick and select around the pick.
+	 * 
+	 * @return Index of the column to play or -1 if there is no proper index.
+	 */
+	private int escapeGrouping() {
+		/*
+		 * Give chance to other rules to work.
+		 */
+		if (Util.PRNG.nextDouble() < 0.1) {
+			return -1;
+		}
+
+		/*
+		 * Zero counters.
+		 */
+		double total = 0;
+		double cumulative[] = new double[state.length];
+		for (int i = 0; i < cumulative.length; i++) {
+			cumulative[i] = 0;
+			for (int j = 0; j < state[i].length; j++) {
+				if (state[i][j] != player) {
+					cumulative[i]++;
+					total++;
+				}
+			}
+		}
+
+		/*
+		 * If there is no our own stones give up in this rule.
+		 */
+		if (total < 1.0D) {
+			return -1;
+		}
+
+		/*
+		 * Calculate percentage by columns.
+		 */
+		for (int i = 0; i < cumulative.length; i++) {
+			cumulative[i] /= total;
+		}
+
+		/*
+		 * Calculate cumulative function.
+		 */
+		for (int i = 1; i < cumulative.length; i++) {
+			cumulative[i] += cumulative[i - 1];
+		}
+
+		/*
+		 * Select index with particular probability.
+		 */
+		double number = Util.PRNG.nextDouble();
+		for (int i = cumulative.length - 1; i >= 0; i--) {
+			if (number > cumulative[i]) {
+				return i + 1;
+			}
+		}
+
+		return 0;
 	}
 
 	/**
@@ -335,8 +548,14 @@ public class SimpleRulesArtificialIntelligence extends
 			Util.log("Rule 3.");
 		} else if ((result = addOneForBlockOtherToFormThree()) != -1) {
 			Util.log("Rule 4.");
-		} else if ((result = addRnadom()) != -1) {
+		} else if ((result = addOneForTwo()) != -1) {
 			Util.log("Rule 5.");
+		} else if ((result = addOneForBlockOtherToFormTwo()) != -1) {
+			Util.log("Rule 6.");
+		} else if ((result = escapeGrouping()) != -1) {
+			Util.log("Rule 7.");
+		} else if ((result = addRnadom()) != -1) {
+			Util.log("Rule 8.");
 		}
 
 		return result;

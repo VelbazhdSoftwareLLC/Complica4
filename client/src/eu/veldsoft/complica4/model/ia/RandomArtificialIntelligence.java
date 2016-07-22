@@ -3,6 +3,7 @@ package eu.veldsoft.complica4.model.ia;
 import eu.veldsoft.complica4.model.Util;
 
 /**
+ * Random search meta heuristic is used as A.I. 
  * 
  * @author Todor Balabanov
  */

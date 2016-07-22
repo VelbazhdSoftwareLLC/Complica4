@@ -68,9 +68,15 @@
                 android:name="name"
                 android:value="NetworkTrainingService" />
             <meta-data
+                android:name="best_rating_script"
+                android:value="best_rating.php" />
+            <meta-data
                 android:name="save_neural_network_script"
                 android:value="save_neural_network.php" />
-        </service>
+            <meta-data
+                android:name="load_neural_network_script"
+                android:value="load_neural_network.php" />
+            </service>
 
         <receiver
             android:name=".BootReceiver"

@@ -44,7 +44,7 @@ public class Board {
 	/**
 	 * Pieces on the board object model.
 	 */
-	private Piece pieces[][] = new Piece[COLS][ROWS];
+	private Piece pieces[][] = {{}};
 
 	/**
 	 * Session history.
@@ -323,6 +323,7 @@ public class Board {
 	public void reset() {
 		turn = 0;
 		gameOver = false;
+		pieces = new Piece[COLS][ROWS];
 		for (int i = 0; i < pieces.length; i++) {
 			for (int j = 0; j < pieces[i].length; j++) {
 				pieces[i][j] = Piece.EMPTY;
