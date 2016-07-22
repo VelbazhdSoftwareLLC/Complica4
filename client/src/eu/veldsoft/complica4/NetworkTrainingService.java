@@ -165,6 +165,9 @@ public class NetworkTrainingService extends Service {
 		return error;
 	}
 
+	/**
+	 * Load a ANN instance from the remote server, the local file or create new.
+	 */
 	private void loadNetwork() {
 		/*
 		 * Start network loading by disconnect the reference from the previous
@@ -249,6 +252,11 @@ public class NetworkTrainingService extends Service {
 		}
 	}
 
+	/**
+	 * Train single ANN.
+	 * 
+	 * @return Error calculated from ANN operation.
+	 */
 	private double trainNetwork() {
 		/*
 		 * Form training set.
@@ -276,10 +284,11 @@ public class NetworkTrainingService extends Service {
 			/*
 			 * Scale input in the range of [0.0-1.0].
 			 */
+			int[][] state = example.getState();
 			double input[] = new double[net.getInputCount()];
-			for (int i = 0, k = 0; i < example.state.length; i++) {
-				for (int j = 0; j < example.state[i].length; j++, k++) {
-					input[k] = (example.state[i][j] - min) / (max - min);
+			for (int i = 0, k = 0; i < state.length; i++) {
+				for (int j = 0; j < state[i].length; j++, k++) {
+					input[k] = (state[i][j] - min) / (max - min);
 				}
 			}
 
@@ -287,7 +296,7 @@ public class NetworkTrainingService extends Service {
 			 * Mark the player who is playing.
 			 */
 			for (int i = input.length - Board.NUMBER_OF_PLAYERS, p = 1; i < input.length; i++, p++) {
-				if (example.piece == p) {
+				if (example.getPiece() == p) {
 					input[i] = 1;
 				} else {
 					input[i] = 0;
@@ -299,7 +308,7 @@ public class NetworkTrainingService extends Service {
 			 */
 			double expected[] = new double[net.getOutputCount()];
 			for (int i = 0; i < expected.length; i++) {
-				if (example.colunm == i) {
+				if (example.getColunm() == i) {
 					expected[i] = 1;
 				} else {
 					expected[i] = 0;
@@ -328,6 +337,9 @@ public class NetworkTrainingService extends Service {
 		return net.calculateError(trainingSet);
 	}
 
+	/**
+	 * Save a ANN instance to the remote server and the local file.
+	 */
 	private void saveNetwork() {
 		/*
 		 * Save network to a file.

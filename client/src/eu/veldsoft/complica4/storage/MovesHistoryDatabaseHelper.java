@@ -90,23 +90,24 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	 *            Move description.
 	 */
 	public void storeMove(Example move) {
+		// TODO Obtain state array reference for better performance.
 		String state = "";
-		for (int i = 0; i < move.state.length; i++) {
-			for (int j = 0; j < move.state[i].length; j++) {
-				state += move.state[i][j];
-				if (j < move.state[i].length - 1) {
+		for (int i = 0; i < move.getState().length; i++) {
+			for (int j = 0; j < move.getState()[i].length; j++) {
+				state += move.getState()[i][j];
+				if (j < move.getState()[i].length - 1) {
 					state += " ";
 				}
 			}
-			if (i < move.state.length - 1) {
+			if (i < move.getState().length - 1) {
 				state += "\n";
 			}
 		}
 
 		ContentValues values = new ContentValues();
-		values.put(MovesHistoryColumns.COLUMN_NAME_PIECE, move.piece);
-		values.put(MovesHistoryColumns.COLUMN_NAME_RANK, move.rank);
-		values.put(MovesHistoryColumns.COLUMN_NAME_COLUNM, move.colunm);
+		values.put(MovesHistoryColumns.COLUMN_NAME_PIECE, move.getPiece());
+		values.put(MovesHistoryColumns.COLUMN_NAME_RANK, move.getRank());
+		values.put(MovesHistoryColumns.COLUMN_NAME_COLUNM, move.getColunm());
 		values.put(MovesHistoryColumns.COLUMN_NAME_STATE, state);
 		values.put(MovesHistoryColumns.COLUMN_NAME_TIME,
 				System.currentTimeMillis() / 1000L);

@@ -56,7 +56,7 @@ public class NeuralNetworkArtificialIntelligence extends
 	}
 
 	/**
-	 * {@inheritDoc}}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public int move(int[][] state, int player) throws NoValidMoveException {

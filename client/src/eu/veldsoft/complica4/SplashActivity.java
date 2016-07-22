@@ -10,12 +10,26 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+/**
+ * Splash screen window.
+ * 
+ * @author Todor Balabanov
+ */
 public class SplashActivity extends Activity {
 
+	/**
+	 * How long the splash screen should be visible.
+	 */
 	private long timeout = 0L;
 
+	/**
+	 * Which window to be opened after the splash screen.
+	 */
 	private String redirect = "";
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +79,9 @@ public class SplashActivity extends Activity {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
