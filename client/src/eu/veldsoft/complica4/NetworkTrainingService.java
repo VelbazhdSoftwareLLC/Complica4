@@ -2,17 +2,13 @@ package eu.veldsoft.complica4;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -42,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Base64;
 import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Piece;
@@ -227,10 +224,10 @@ public class NetworkTrainingService extends Service {
 			JSONObject result = new JSONObject(EntityUtils.toString(
 					response.getEntity(), "UTF-8"));
 			if (result.getBoolean(Util.JSON_FOUND_KEY) == true) {
-				ByteArrayInputStream bytes = new ByteArrayInputStream(result.get(Util.JSON_OBJECT_KEY).toString().getBytes());
 				ObjectInputStream in = new ObjectInputStream(
-						bytes);
-				//TODO Need extensive testing.
+						new ByteArrayInputStream(Base64.decode(
+								(String) result.get(Util.JSON_OBJECT_KEY),
+								Base64.DEFAULT)));
 				net = (BasicNetwork) in.readObject();
 				in.close();
 			}
@@ -238,9 +235,6 @@ public class NetworkTrainingService extends Service {
 			net = null;
 			System.err.println(exception);
 		} catch (IOException exception) {
-			net = null;
-			System.err.println(exception);
-		} catch (ParseException exception) {
 			net = null;
 			System.err.println(exception);
 		} catch (JSONException exception) {
@@ -403,12 +397,12 @@ public class NetworkTrainingService extends Service {
 		JSONObject json = new JSONObject();
 		try {
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-			ObjectOutputStream out = new ObjectOutputStream(
-					bytes);
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
 			out.writeObject(storeOnRemote);
-			out.close();
-			json.put(Util.JSON_OBJECT_KEY, Base64.encodeBase64String(bytes.toByteArray()));
+			json.put(Util.JSON_OBJECT_KEY,
+					Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT));
 			json.put(Util.JSON_RATING_KEY, annTrainingError);
+			out.close();
 		} catch (JSONException exception) {
 			System.err.println(exception);
 		} catch (IOException exception) {

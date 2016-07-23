@@ -25,6 +25,7 @@ import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
 /**
@@ -243,8 +244,8 @@ public class GameActivity extends Activity {
 				new SimpleRulesArtificialIntelligence(),
 				// new NeuralNetworkArtificialIntelligence(net, Board.COLS
 				// * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
-				// * Board.ROWS / 2, Board.COLS, Piece.getMinId(),
-				// Piece.getMaxId()),
+				// * Board.ROWS / 2, Board.COLS, Piece.minId(),
+				// Piece.maxId()),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
