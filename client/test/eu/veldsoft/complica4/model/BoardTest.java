@@ -1,383 +1,436 @@
 package eu.veldsoft.complica4.model;
 
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Tests the methods in the Board class.
- * 
+ *
  * @author Georgi Gospodinov
  * @see Board
  */
 public class BoardTest {
-	
-	//TODO fill in the comments (more depth)
 
-	/**
-	 * Board object used in all test methods and the setUp method.
-	 */
-	private Board board = new Board();
+    //TODO fill in the comments (more depth)
 
-	/**
-	 * A preparation before each test.
-	 *
-	 * @throws Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		board.reset();
-	}
+    /**
+     * Board object used in all test methods and the setUp method.
+     */
+    private Board board = new Board ();
 
-	/**
-	 * Tests to see if the new turn is returned correctly.
-	 */
-	@Test
-	public void testGetTurn() {
-		/*
-		 * 
+    /**
+     * A preparation before each test.
+     *
+     * @throws Exception
+     */
+    @Before
+    public void setUp () throws Exception {
+        board.reset ();
+    }
+
+    /**
+     * Tests to see if the new turn is returned correctly.
+     */
+    @Test
+    public void testGetTurn () {
+        /*
+         * Turn is zero before the start of the game.
 		 */
-		assertEquals(0, board.getTurn());
-
-		/*
-		 * 
-		 */
-		board.next();
-		assertEquals(1, board.getTurn());
+        assertEquals ( 0, board.getTurn () );
 
 		/*
-		 * 
+         * The game starts with turn one.
 		 */
-		board.next();
-		assertEquals(2, board.getTurn());
+        board.next ();
+        assertEquals ( 1, board.getTurn () );
 
 		/*
-		 * 
+		 * The turn is incremented by exactly one.
 		 */
-		board.next();
-		assertEquals(3, board.getTurn());
+        board.next ();
+        assertEquals ( 2, board.getTurn () );
 
 		/*
-		 * 
+		 * Another test of the turn counter.
 		 */
-		board.reset();
-		assertEquals(0, board.getTurn());
-	}
+        board.next ();
+        assertEquals ( 3, board.getTurn () );
 
-	/**
-	 * Test to see if the program recognizes the end of the game.
-	 */
-	@Test
-	public void testIsGameOver() {
 		/*
-		 * ...
+		 * Reseting the board sets the turn counter back to zero.
 		 */
-		assertFalse(board.isGameOver());
+        board.reset ();
+        assertEquals ( 0, board.getTurn () );
+    }
+
+    /**
+     * Test to see if the program recognizes the end of the game.
+     */
+    @Test
+    public void testIsGameOver () {
+		/*
+		 * Game is not over at start.
+		 */
+        assertFalse ( board.isGameOver () );
 		
 		/*
-		 * ...
+		 * Take the state of pieces on the board.
 		 */
-		Piece[][] pieces = board.getPieces();
+        Piece[][] pieces = board.getPieces ();
 
 		/* 
 		 * Select random player. Empty is not a player.
 		 */
-		List <Piece> players = Arrays.asList(Piece.values());
-		players.remove(Piece.EMPTY);
-		Collections.shuffle(players);
-		
-		//TODO Random selection of wining line coordinate.
-		
-		pieces[0][0] = players.get(0);
-		pieces[0][1] = Piece.PLAYER1;
-		pieces[0][2] = Piece.PLAYER1;
-		pieces[0][3] = Piece.PLAYER1;
-		board.hasWinner();
-		assertTrue(board.isGameOver());
+        List<Piece> players = Arrays.asList ( Piece.values () );
+        players.remove ( Piece.EMPTY );
+        Collections.shuffle ( players );
 
-		//TODO Test situations with different level of board fullness.
+        int randomPlayer = new Random ().nextInt ( Board.NUMBER_OF_PLAYERS );
 		
 		/*
-		 * Horisontal.
+		 * Vertical.
 		 */
+        pieces[0][0] = players.get ( randomPlayer );
+        pieces[0][1] = players.get ( randomPlayer );
+        pieces[0][2] = players.get ( randomPlayer );
+        pieces[0][3] = players.get ( randomPlayer );
+        board.hasWinner ();
+        assertTrue ( board.isGameOver () );
+		
+		/*
+		 * Horizontal.
+		 */
+        board.reset ();
+        pieces[0][0] = players.get ( randomPlayer );
+        pieces[1][0] = players.get ( randomPlayer );
+        pieces[2][0] = players.get ( randomPlayer );
+        pieces[3][0] = players.get ( randomPlayer );
+        board.hasWinner ();
+        assertTrue ( board.isGameOver () );
 		
 		/*
 		 * Primary diagonal.
 		 */
+        board.reset ();
+        pieces[3][0] = players.get ( randomPlayer );
+        pieces[2][1] = players.get ( randomPlayer );
+        pieces[1][2] = players.get ( randomPlayer );
+        pieces[0][3] = players.get ( randomPlayer );
+        board.hasWinner ();
+        assertTrue ( board.isGameOver () );
 		
 		/*
 		 * Secondary diagonal.
 		 */
+        board.reset ();
+        pieces[0][0] = players.get ( randomPlayer );
+        pieces[1][1] = players.get ( randomPlayer );
+        pieces[2][2] = players.get ( randomPlayer );
+        pieces[3][3] = players.get ( randomPlayer );
+        board.hasWinner ();
+        assertTrue ( board.isGameOver () );
 
-		//TODO Test negative outcomes.
-	}
+        //TODO Test negative outcomes.
+        //TODO Test situations with different levels of board fullness.
+    }
 
-	/**
-	 * Tests to see if the pieces in the board are saved and returned correctly.
-	 */
-	@Test
-	public void testGetPieces() {
-		Piece[][] pieces = board.getPieces();
+    /**
+     * Tests to see if the pieces in the board are saved and returned correctly.
+     */
+    @Test
+    public void testGetPieces () {
+        Piece[][] pieces = board.getPieces ();
 
-		for (int i = 0; i < pieces.length; i++) {
-			for (int j = 0; j < pieces[i].length; j++) {
-				assertEquals(Piece.EMPTY, pieces[i][j]);
-			}
-		}
+        /*
+         * No pieces at start.
+         */
+        for ( int i = 0; i < pieces.length; i++ ) {
+            for ( int j = 0; j < pieces[i].length; j++ ) {
+                assertEquals ( Piece.EMPTY, pieces[i][j] );
+            }
+        }
+        /*
+         * Generate random positions to test with.
+         */
+        Random rand = new Random ();
+        int[] randomCols = new int[4];
+        int[] randomRows = new int[4];
+        for ( int i = 0; i < 4; i++ ) {
+            randomCols[i] = rand.nextInt ( Board.COLS );
+            randomRows[i] = rand.nextInt ( Board.ROWS );
+        }
 
-		//TODO random positions
-		pieces[0][1] = Piece.PLAYER1;
-		pieces[1][2] = Piece.PLAYER2;
-		pieces[2][3] = Piece.PLAYER3;
-		pieces[3][4] = Piece.PLAYER4;
-		assertEquals(Piece.PLAYER1, board.getPieces()[0][1]);
-		assertEquals(Piece.PLAYER2, board.getPieces()[1][2]);
-		assertEquals(Piece.PLAYER3, board.getPieces()[2][3]);
-		assertEquals(Piece.PLAYER4, board.getPieces()[3][4]);
-	}
+        /*
+         * Check one position for each player.
+         */
+        pieces[randomRows[0]][randomCols[0]] = Piece.PLAYER1;
+        pieces[randomRows[1]][randomCols[1]] = Piece.PLAYER2;
+        pieces[randomRows[2]][randomCols[2]] = Piece.PLAYER3;
+        pieces[randomRows[3]][randomCols[3]] = Piece.PLAYER4;
+        assertEquals ( Piece.PLAYER1, board.getPieces ()[randomRows[0]][randomCols[0]] );
+        assertEquals ( Piece.PLAYER2, board.getPieces ()[randomRows[1]][randomCols[1]] );
+        assertEquals ( Piece.PLAYER3, board.getPieces ()[randomRows[2]][randomCols[2]] );
+        assertEquals ( Piece.PLAYER4, board.getPieces ()[randomRows[3]][randomCols[3]] );
+    }
 
-	/**
-	 * Tests to see if the state of the game is saved and returned correctly.
-	 */
-	@Test
-	public void testGetState() {
+    /**
+     * Tests to see if the state of the game is saved and returned correctly.
+     */
+    @Test
+    public void testGetState () {
 
-		int[][] state = board.getState();
+        int[][] state = board.getState ();
 
-		for (int i = 0; i < state.length; i++) {
-			for (int j = 0; j < state.length; j++) {
-				assertEquals(0, state[i][j]);
-			}
-		}
+        /*
+         * State is empty at start.
+         */
+        for ( int i = 0; i < state.length; i++ ) {
+            for ( int j = 0; j < state.length; j++ ) {
+                assertEquals ( 0, state[i][j] );
+            }
+        }
 
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER2);
+        List<Piece> players = Arrays.asList ( Piece.values () );
+        players.remove ( Piece.EMPTY );
+        Collections.shuffle ( players );
 
-		assertEquals(1, board.getState()[1][Board.ROWS - 1]);
-		assertEquals(2, board.getState()[2][Board.ROWS - 1]);
 
-	}
+        /*
+         * Add a piece to each column.
+         */
+        for ( int i = 0; i < Board.COLS; i++ ) {
 
-	/**
-	 * Tests to see if the move history (session) is saved and returned
-	 * correctly.
-	 */
-	@Test
-	public void testGetSession() {
-		// at start, session should be empty
-		assertTrue(board.getSession().isEmpty());
+            board.addTo ( i, players.get ( i ) );
+            assertEquals ( players.get ( i ).getId (), board.getState ()[i][Board.ROWS - 1] );
+        }
 
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(0, Piece.PLAYER3);
+    }
 
-		List<Example> session = board.getSession();
-		assertEquals(3, session.size());
+    /**
+     * Tests to see if the move history (session) is saved and returned
+     * correctly.
+     */
+    @Test
+    public void testGetSession () {
+        // at start, session should be empty
+        assertTrue ( board.getSession ().isEmpty () );
 
-		assertEquals(1, session.get(0).piece);
-		assertEquals(2, session.get(1).piece);
-		assertEquals(3, session.get(2).piece);
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 0, Piece.PLAYER2 );
+        board.addTo ( 0, Piece.PLAYER3 );
 
-	}
+        List<Example> session = board.getSession ();
+        assertEquals ( 3, session.size () );
 
-	/**
-	 * Tests to see if the move history (session) of the winner is correctly
-	 * separated from the rest of the moves.
-	 */
-	@Test
-	public void testGetWinnerSession() {
+        assertEquals ( 1, session.get ( 0 ).piece );
+        assertEquals ( 2, session.get ( 1 ).piece );
+        assertEquals ( 3, session.get ( 2 ).piece );
 
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
+    }
 
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER3);
+    /**
+     * Tests to see if the move history (session) of the winner is correctly
+     * separated from the rest of the moves.
+     */
+    @Test
+    public void testGetWinnerSession () {
 
-		board.addTo(0, Piece.PLAYER3);
-		board.addTo(1, Piece.PLAYER4);
-		board.addTo(2, Piece.PLAYER1);
-		board.addTo(3, Piece.PLAYER2);
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER3 );
+        board.addTo ( 3, Piece.PLAYER4 );
 
-		board.addTo(0, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER1);
+        board.addTo ( 0, Piece.PLAYER2 );
+        board.addTo ( 1, Piece.PLAYER1 );
+        board.addTo ( 2, Piece.PLAYER4 );
+        board.addTo ( 3, Piece.PLAYER3 );
 
-		board.hasWinner();
-		List<Example> winnerSession = board.getWinnerSession();
-		// two winners - Player 1 and Player 4, each won with four moves
+        board.addTo ( 0, Piece.PLAYER3 );
+        board.addTo ( 1, Piece.PLAYER4 );
+        board.addTo ( 2, Piece.PLAYER1 );
+        board.addTo ( 3, Piece.PLAYER2 );
 
-		// something is wrong here....
-		// see the System.out.print-s in testWinners()
-		for (Example e : winnerSession)
-			System.out.println(e.piece);
+        board.addTo ( 0, Piece.PLAYER4 );
+        board.addTo ( 3, Piece.PLAYER1 );
 
-		fail("not fully implemented");
+        board.hasWinner ();
+        List<Example> winnerSession = board.getWinnerSession ();
+        // two winners - Player 1 and Player 4, each wins with four moves
 
-	}
+        // something is wrong here....
+        // see the System.out.print-s in testWinners()
+        for ( Example e : winnerSession )
+            System.out.println ( e.piece );
 
-	/**
-	 * Tests to see if the turn is progressing correctly.
-	 */
-	@Test
-	public void testNext() {
-		int currentTurn = board.getTurn();
-		board.next();
-		assertEquals(currentTurn + 1, board.getTurn());
-		board.next();
-		assertEquals(currentTurn + 2, board.getTurn());
-	}
+        fail ( "not fully implemented" );
 
-	/**
-	 * Tests to see if the board is completely reset when necessary.
-	 */
-	@Test
-	public void testReset() {
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(0, Piece.PLAYER1);
+    }
 
-		assertTrue(board.hasWinner());
-		assertTrue(board.isGameOver());
+    /**
+     * Tests to see if the turn is progressing correctly.
+     */
+    @Test
+    public void testNext () {
+        int currentTurn = board.getTurn ();
+        board.next ();
+        assertEquals ( currentTurn + 1, board.getTurn () );
+        board.next ();
+        assertEquals ( currentTurn + 2, board.getTurn () );
+    }
 
-		board.reset();
+    /**
+     * Tests to see if the board is completely reset when necessary.
+     */
+    @Test
+    public void testReset () {
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER3 );
+        board.addTo ( 3, Piece.PLAYER4 );
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 0, Piece.PLAYER1 );
 
-		Piece[][] pieces = board.getPieces();
-		for (int i = 0; i < Board.COLS; i++) {
-			for (int j = 0; j < Board.ROWS; j++) {
-				assertEquals(Piece.EMPTY, pieces[i][j]);
-			}
-		}
-		assertFalse(board.hasWinner());
-		assertFalse(board.isGameOver());
-	}
+        assertTrue ( board.hasWinner () );
+        assertTrue ( board.isGameOver () );
 
-	/**
-	 * Tests to see if new pieces are added correctly to the board.
-	 */
-	@Test
-	public void testAddTo() {
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
-		board.addTo(0, Piece.PLAYER2);
-		assertEquals(Piece.PLAYER1, board.getPieces()[0][Board.ROWS - 1]);
-		assertEquals(Piece.PLAYER2, board.getPieces()[1][Board.ROWS - 1]);
-		assertEquals(Piece.PLAYER3, board.getPieces()[2][Board.ROWS - 1]);
-		assertEquals(Piece.PLAYER4, board.getPieces()[3][Board.ROWS - 1]);
-		assertEquals(Piece.PLAYER2, board.getPieces()[0][Board.ROWS - 2]);
-	}
+        board.reset ();
 
-	/**
-	 * Tests to see if the program recognizes the winner.
-	 */
-	@Test
-	public void testHasWinner() {
+        Piece[][] pieces = board.getPieces ();
+        for ( int i = 0; i < Board.COLS; i++ ) {
+            for ( int j = 0; j < Board.ROWS; j++ ) {
+                assertEquals ( Piece.EMPTY, pieces[i][j] );
+            }
+        }
+        assertFalse ( board.hasWinner () );
+        assertFalse ( board.isGameOver () );
+    }
 
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
+    /**
+     * Tests to see if new pieces are added correctly to the board.
+     */
+    @Test
+    public void testAddTo () {
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER3 );
+        board.addTo ( 3, Piece.PLAYER4 );
+        board.addTo ( 0, Piece.PLAYER2 );
+        assertEquals ( Piece.PLAYER1, board.getPieces ()[0][Board.ROWS - 1] );
+        assertEquals ( Piece.PLAYER2, board.getPieces ()[1][Board.ROWS - 1] );
+        assertEquals ( Piece.PLAYER3, board.getPieces ()[2][Board.ROWS - 1] );
+        assertEquals ( Piece.PLAYER4, board.getPieces ()[3][Board.ROWS - 1] );
+        assertEquals ( Piece.PLAYER2, board.getPieces ()[0][Board.ROWS - 2] );
+    }
 
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER2);
-		board.addTo(3, Piece.PLAYER3);
+    /**
+     * Tests to see if the program recognizes the winner.
+     */
+    @Test
+    public void testHasWinner () {
 
-		board.addTo(2, Piece.PLAYER1);
-		board.addTo(3, Piece.PLAYER2);
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER3 );
+        board.addTo ( 3, Piece.PLAYER4 );
 
-		board.addTo(3, Piece.PLAYER1);
+        board.addTo ( 1, Piece.PLAYER1 );
+        board.addTo ( 2, Piece.PLAYER2 );
+        board.addTo ( 3, Piece.PLAYER3 );
 
-		assertTrue(board.hasWinner());
-	}
+        board.addTo ( 2, Piece.PLAYER1 );
+        board.addTo ( 3, Piece.PLAYER2 );
 
-	/**
-	 * Tests to see if all winning pieces are recognized.
-	 */
-	@Test
-	public void testWinners() {
+        board.addTo ( 3, Piece.PLAYER1 );
 
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
+        assertTrue ( board.hasWinner () );
+    }
 
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER3);
+    /**
+     * Tests to see if all winning pieces are recognized.
+     */
+    @Test
+    public void testWinners () {
 
-		board.addTo(0, Piece.PLAYER3);
-		board.addTo(1, Piece.PLAYER4);
-		board.addTo(2, Piece.PLAYER1);
-		board.addTo(3, Piece.PLAYER2);
+        //TODO take a deep look at this and Board.winners()
 
-		board.addTo(0, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER1);
+        board.addTo ( 0, Piece.PLAYER1 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER3 );
+        board.addTo ( 3, Piece.PLAYER4 );
 
-		// should it be getWinners()? or defineWinners()?
-		int[][] winners = board.winners();
+        board.addTo ( 0, Piece.PLAYER2 );
+        board.addTo ( 1, Piece.PLAYER1 );
+        board.addTo ( 2, Piece.PLAYER4 );
+        board.addTo ( 3, Piece.PLAYER3 );
 
-		// PLAYER1 victory - bottom left to top right diagonal
-		assertEquals(1, winners[0][Board.ROWS - 1]);
-		assertEquals(1, winners[1][Board.ROWS - 2]);
-		assertEquals(1, winners[2][Board.ROWS - 3]);
-		assertEquals(1, winners[3][Board.ROWS - 4]);
+        board.addTo ( 0, Piece.PLAYER3 );
+        board.addTo ( 1, Piece.PLAYER4 );
+        board.addTo ( 2, Piece.PLAYER1 );
+        board.addTo ( 3, Piece.PLAYER2 );
 
-		// PLAYER4 victory - bottom right to top left diagonal
-		assertEquals(1, winners[3][Board.ROWS - 1]);
-		assertEquals(1, winners[2][Board.ROWS - 2]);
-		assertEquals(1, winners[1][Board.ROWS - 3]);
-		assertEquals(1, winners[0][Board.ROWS - 4]);
+        board.addTo ( 0, Piece.PLAYER4 );
+        board.addTo ( 3, Piece.PLAYER1 );
 
-		for (int i = 0; i < Board.COLS; i++) {
-			for (int j = 0; j < Board.ROWS; j++) {
-				System.out.print(winners[i][j] + " ");
-			}
-			System.out.println();
-		}
+        // should it be getWinners()? or defineWinners()?
+        int[][] winners = board.winners ();
 
-		board.reset();
+        // PLAYER1 victory - bottom left to top right diagonal
+        assertEquals ( 1, winners[0][Board.ROWS - 1] );
+        assertEquals ( 1, winners[1][Board.ROWS - 2] );
+        assertEquals ( 1, winners[2][Board.ROWS - 3] );
+        assertEquals ( 1, winners[3][Board.ROWS - 4] );
 
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER2);
-		board.addTo(3, Piece.PLAYER2);
+        // PLAYER4 victory - bottom right to top left diagonal
+        assertEquals ( 1, winners[3][Board.ROWS - 1] );
+        assertEquals ( 1, winners[2][Board.ROWS - 2] );
+        assertEquals ( 1, winners[1][Board.ROWS - 3] );
+        assertEquals ( 1, winners[0][Board.ROWS - 4] );
 
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
+        for ( int i = 0; i < Board.COLS; i++ ) {
+            for ( int j = 0; j < Board.ROWS; j++ ) {
+                System.out.print ( winners[i][j] + " " );
+            }
+            System.out.println ();
+        }
 
-		winners = board.winners();
+        board.reset ();
 
-		// PLAYER3 victory - in a column
-		assertEquals(1, winners[4][Board.ROWS - 1]);
-		assertEquals(1, winners[4][Board.ROWS - 2]);
-		assertEquals(1, winners[4][Board.ROWS - 3]);
-		assertEquals(1, winners[4][Board.ROWS - 4]);
+        board.addTo ( 0, Piece.PLAYER2 );
+        board.addTo ( 1, Piece.PLAYER2 );
+        board.addTo ( 2, Piece.PLAYER2 );
+        board.addTo ( 3, Piece.PLAYER2 );
 
-		// PLAYER2 victory - in a row
-		assertEquals(1, winners[0][Board.ROWS - 1]);
-		assertEquals(1, winners[1][Board.ROWS - 1]);
-		assertEquals(1, winners[2][Board.ROWS - 1]);
-		assertEquals(1, winners[3][Board.ROWS - 1]);
+        board.addTo ( 4, Piece.PLAYER3 );
+        board.addTo ( 4, Piece.PLAYER3 );
+        board.addTo ( 4, Piece.PLAYER3 );
+        board.addTo ( 4, Piece.PLAYER3 );
 
-	}
+        winners = board.winners ();
+
+        // PLAYER3 victory - in a column
+        assertEquals ( 1, winners[4][Board.ROWS - 1] );
+        assertEquals ( 1, winners[4][Board.ROWS - 2] );
+        assertEquals ( 1, winners[4][Board.ROWS - 3] );
+        assertEquals ( 1, winners[4][Board.ROWS - 4] );
+
+        // PLAYER2 victory - in a row
+        assertEquals ( 1, winners[0][Board.ROWS - 1] );
+        assertEquals ( 1, winners[1][Board.ROWS - 1] );
+        assertEquals ( 1, winners[2][Board.ROWS - 1] );
+        assertEquals ( 1, winners[3][Board.ROWS - 1] );
+
+    }
 
 }

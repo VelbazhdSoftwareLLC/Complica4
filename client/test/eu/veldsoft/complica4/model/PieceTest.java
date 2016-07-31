@@ -1,6 +1,7 @@
 package eu.veldsoft.complica4.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -19,18 +20,10 @@ public class PieceTest {
 	@Test
 	public void testGetId() {
 		assertEquals(0, Piece.EMPTY.getId());
-
-//		piece = Piece.PLAYER1;
-//		assertEquals(1, piece.getId());
-//		
-//		piece = Piece.PLAYER2;
-//		assertEquals(2, piece.getId());
-//		
-//		piece = Piece.PLAYER3;
-//		assertEquals(3, piece.getId());
-//		
-//		piece = Piece.PLAYER4;
-//		assertEquals(4, piece.getId());
+		assertEquals(1, Piece.PLAYER1.getId());
+		assertEquals(2, Piece.PLAYER2.getId());
+		assertEquals(3, Piece.PLAYER3.getId());
+		assertEquals(4, Piece.PLAYER4.getId());
 	}
 
 	/**
@@ -40,7 +33,7 @@ public class PieceTest {
 	public void testMinId() {
 		assertEquals(0, Piece.minId());
 		
-		//TODO Check min<=max!
+		assertTrue (Piece.minId ()<Piece.maxId ());
 	}
 
 	/**
@@ -49,8 +42,8 @@ public class PieceTest {
 	@Test
 	public void testMaxId() {
 		assertEquals(4, Piece.maxId());
-		
-		//TODO Check max>=min!
+
+		assertTrue (Piece.maxId ()>Piece.minId ());
 	}
 
 }

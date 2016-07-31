@@ -8,7 +8,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+/**
+ * 
+ * @author Georgi
+ *
+ * @see Util
+ */
 public class UtilTest {
 
 	// TELL Todor that in Util.java lines 25 and 30 have the same comment. It is
