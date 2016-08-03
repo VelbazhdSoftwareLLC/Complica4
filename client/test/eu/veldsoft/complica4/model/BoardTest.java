@@ -5,7 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +21,73 @@ import org.junit.Test;
  */
 public class BoardTest {
 
-	// TODO Fill in the comments (more depth).
+	// TODO Fill in the comments with more depth.
+	// This is done while writing the tests.
 
 	/**
 	 * Board object used in all test methods and the setUp method.
 	 */
 	private Board board = new Board();
+
+	/**
+	 * Fill a board with a random amount of pieces. This method generates a
+	 * random number for the amount of pieces to put for each player and then
+	 * calls the other fillRandomly method.
+	 *
+	 * @param boardToFill
+	 *            The board in which random pieces are put.
+	 * @see BoardTest#fillRandomly(Board, int)
+	 */
+	private static void fillRandomly(Board boardToFill) {
+		/*
+		 * A typical game ends before each player has put 30 pieces.
+		 */
+		int piecesPerPlayer = Util.PRNG.nextInt(30);
+		fillRandomly(boardToFill, piecesPerPlayer);
+	}
+
+	/**
+	 * Fill a board with a given amount of pieces. This method makes use of the
+	 * fact that Board.getPieces() returns a pointer to the original array and
+	 * not a deep copy. This method is often called by the other fillRandomly
+	 * method.
+	 *
+	 * @param boardToFill
+	 *            The board in which random pieces are put.
+	 * @param piecesPerPlayer
+	 *            The amount of pieces to put for each player.
+	 * @see Board#getPieces()
+	 * @see BoardTest#fillRandomly(Board)
+	 */
+	private static void fillRandomly(Board boardToFill, int piecesPerPlayer) {
+		Piece[][] pieces = boardToFill.getPieces();
+		LinkedList<Piece> players = getPlayerPieces();
+		for (int i = 0; i < piecesPerPlayer; i++) {
+			for (Piece player : players) {
+				pieces[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = player;
+			}
+		}
+	}
+
+	/**
+	 * Create a LinkedList of all the player pieces. Then shuffle it. This
+	 * method is often called with get(0) because a random player is needed.
+	 * Since players are shuffled, the first element in the list will always be
+	 * different.
+	 *
+	 * @return The shuffled List of Pieces.
+	 */
+	private static LinkedList<Piece> getPlayerPieces() {
+		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
+
+		/*
+		 * Empty is not a player.
+		 */
+		players.remove(Piece.EMPTY);
+		Collections.shuffle(players);
+
+		return players;
+	}
 
 	/**
 	 * A preparation before each test.
@@ -36,38 +100,20 @@ public class BoardTest {
 	}
 
 	/**
-	 * Tests to see if the new turn is returned correctly.
+	 * Tests to see if the turn is returned correctly.
 	 */
 	@Test
 	public void testGetTurn() {
 		/*
-		 * Turn is zero before the start of the game.
+		 * The turn is tracked correctly for many moves. A typical game rarely
+		 * lasts more than 100 moves.
 		 */
-		assertEquals(0, board.getTurn());
-
-		/*
-		 * The game starts with turn one.
-		 */
-		board.next();
-		assertEquals(1, board.getTurn());
-
-		/*
-		 * The turn is incremented by exactly one.
-		 */
-		board.next();
-		assertEquals(2, board.getTurn());
-
-		/*
-		 * Another test of the turn counter.
-		 */
-		board.next();
-		assertEquals(3, board.getTurn());
-
-		/*
-		 * Reseting the board sets the turn counter back to zero.
-		 */
-		board.reset();
-		assertEquals(0, board.getTurn());
+		int moves = 100;
+		for (int i = 0; i < moves; i++) {
+			assertEquals(i, board.getTurn());
+			board.next();
+		}
+		assertEquals(moves, board.getTurn());
 	}
 
 	/**
@@ -81,68 +127,107 @@ public class BoardTest {
 		assertFalse(board.isGameOver());
 
 		/*
-		 * Take the state of pieces on the board.
+		 * Select random player.
 		 */
-		Piece[][] pieces = board.getPieces();
+		Piece player = getPlayerPieces().get(0);
+		Piece[][] pieces;
 
 		/*
-		 * Select random player. Empty is not a player.
+		 * Vertical wins. Game over should be recognized for all possible
+		 * combinations of four in every column.
 		 */
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-		players.remove(0);
-		Collections.shuffle(players);
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
 
-		int randomPlayer = new Random().nextInt(Board.NUMBER_OF_PLAYERS);
+				pieces[i][j] = player;
+				pieces[i][j + 1] = player;
+				pieces[i][j + 2] = player;
+				pieces[i][j + 3] = player;
 
-		/*
-		 * Vertical.
-		 */
-		pieces[0][0] = players.get(randomPlayer);
-		pieces[0][1] = players.get(randomPlayer);
-		pieces[0][2] = players.get(randomPlayer);
-		pieces[0][3] = players.get(randomPlayer);
-		board.hasWinner();
-		assertTrue(board.isGameOver());
-
-		/*
-		 * Horizontal.
-		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[0][0] = players.get(randomPlayer);
-		pieces[1][0] = players.get(randomPlayer);
-		pieces[2][0] = players.get(randomPlayer);
-		pieces[3][0] = players.get(randomPlayer);
-		board.hasWinner();
-		assertTrue(board.isGameOver());
+				board.hasWinner();
+				assertTrue(board.isGameOver());
+			}
+		}
 
 		/*
-		 * Primary diagonal.
+		 * Horizontal wins. Game over should be recognized for all possible
+		 * combinations of four in every row.
 		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[3][0] = players.get(randomPlayer);
-		pieces[2][1] = players.get(randomPlayer);
-		pieces[1][2] = players.get(randomPlayer);
-		pieces[0][3] = players.get(randomPlayer);
-		board.hasWinner();
-		assertTrue(board.isGameOver());
+		for (int i = 0; i < Board.ROWS; i++) {
+
+			for (int j = 0; j < Board.COLS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
+
+				pieces[j][i] = player;
+				pieces[j + 1][i] = player;
+				pieces[j + 2][i] = player;
+				pieces[j + 3][i] = player;
+
+				board.hasWinner();
+				assertTrue(board.isGameOver());
+			}
+		}
 
 		/*
-		 * Secondary diagonal.
+		 * Primary diagonal wins. Game over should be recognized for all
+		 * possible combinations of four in every bottom left to top right
+		 * diagonal.
 		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[0][0] = players.get(randomPlayer);
-		pieces[1][1] = players.get(randomPlayer);
-		pieces[2][2] = players.get(randomPlayer);
-		pieces[3][3] = players.get(randomPlayer);
-		board.hasWinner();
-		assertTrue(board.isGameOver());
+		for (int i = 0; i < Board.COLS - 3; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
+
+				pieces[i + 3][j] = player;
+				pieces[i + 2][j + 1] = player;
+				pieces[i + 1][j + 2] = player;
+				pieces[i][j + 3] = player;
+
+				board.hasWinner();
+				assertTrue(board.isGameOver());
+			}
+		}
+
+		/*
+		 * Secondary diagonal wins. Game over should be recognized for all
+		 * possible combinations of four in every top left to bottom right
+		 * diagonal.
+		 */
+		for (int i = 0; i < Board.COLS - 3; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
+
+				pieces[i][j] = player;
+				pieces[i + 1][j + 1] = player;
+				pieces[i + 2][j + 2] = player;
+				pieces[i + 3][j + 3] = player;
+
+				board.hasWinner();
+				assertTrue(board.isGameOver());
+			}
+		}
 
 		// TODO Test negative outcomes.
+		/*
+		 * Generate some random boards that cannot result in ending the game.
+		 * Each player will have placed three pieces, so there cannot be a
+		 * sequence of four.
+		 */
+		for (int i = 0; i < 20; i++) {
+			board.reset();
+			fillRandomly(board, 3);
 
-		// TODO Test situations with different levels of board fullness.
+			board.hasWinner();
+			assertFalse(board.isGameOver());
+		}
 	}
 
 	/**
@@ -155,9 +240,9 @@ public class BoardTest {
 		/*
 		 * No pieces at start.
 		 */
-		for (int i = 0; i < pieces.length; i++) {
-			for (int j = 0; j < pieces[i].length; j++) {
-				assertEquals(Piece.EMPTY, pieces[i][j]);
+		for (Piece[] columnPieces : pieces) {
+			for (Piece piece : columnPieces) {
+				assertEquals(Piece.EMPTY, piece);
 			}
 		}
 
@@ -194,26 +279,20 @@ public class BoardTest {
 		/*
 		 * State is empty at start.
 		 */
-		for (int i = 0; i < state.length; i++) {
+		for (int[] columnState : state) {
 			for (int j = 0; j < state.length; j++) {
-				assertEquals(0, state[i][j]);
+				assertEquals(0, columnState[j]);
 			}
 		}
 
-		/*
-		 * Select random player. Empty is not a player.
-		 */
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-		players.remove(0);
-		Collections.shuffle(players);
-
+		LinkedList<Piece> players = getPlayerPieces();
 		/*
 		 * Add a piece to each column.
 		 */
-		for (int i = 0; i < Board.NUMBER_OF_PLAYERS; i++) {
-			board.addTo(i, players.get(i)); // TODO Totally wrong. Counter i
-											// should be something else.
-			assertEquals(players.get(i).getId(), board.getState()[i][Board.ROWS - 1]);
+		for (int i = 0; i < Board.COLS; i++) {
+			int index = Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS);
+			board.addTo(i, players.get(index));
+			assertEquals(players.get(index).getId(), board.getState()[i][Board.ROWS - 1]);
 		}
 
 		// TODO Test rows other than the bottom.
@@ -231,41 +310,38 @@ public class BoardTest {
 		assertTrue(board.getSession().isEmpty());
 
 		/*
-		 * Put one piece for each player in a random column.
+		 * Put a random amount of pieces for each player in a random column.
+		 * Game rarely lasts more than 100 turns. Divide those by the number of
+		 * players.
 		 */
-		int[] randomCols = new int[Board.NUMBER_OF_PLAYERS]; // TODO Rewrite
-																// without
-																// array.
-		for (int i = 0; i < Board.NUMBER_OF_PLAYERS; i++) {
-			randomCols[i] = new Random().nextInt(Board.NUMBER_OF_PLAYERS); // TODO
-																			// Use
-																			// Util.PRGN.
+		int amount = Util.PRNG.nextInt(100 / Board.NUMBER_OF_PLAYERS);
+		for (int i = 0; i < amount; i++) {
+			for (Piece piece : Piece.values()) {
+				if (piece == Piece.EMPTY) {
+					continue;
+				}
+				board.addTo(Util.PRNG.nextInt(Board.COLS), piece);
+			}
 		}
 
-		// TODO Longer game sessions.
-
-		// for(Piece piece : Piece.values()) {
-		// if(piece == Piece.EMPTY) {
-		// continue;
-		// }
-		// // Do the job.
-		// }
-
-		board.addTo(randomCols[0], Piece.PLAYER1);
-		board.addTo(randomCols[1], Piece.PLAYER2);
-		board.addTo(randomCols[2], Piece.PLAYER3);
-		board.addTo(randomCols[3], Piece.PLAYER4);
-
 		/*
-		 * There are now 4 turns in the session.
+		 * The number of turns in the session is now 4 times the value of
+		 * amount.
 		 */
 		List<Example> session = board.getSession();
-		assertEquals(4, session.size());
+		assertEquals(4 * amount, session.size());
 
-		assertEquals(1, session.get(0).piece);
-		assertEquals(2, session.get(1).piece);
-		assertEquals(3, session.get(2).piece);
-		assertEquals(4, session.get(3).piece);
+		/*
+		 * Check that the pieces in the session belong to the respective
+		 * players. For each iteration of i, it is checked whether each player
+		 * has put a piece.
+		 */
+		for (int i = 0; i < amount; i++) {
+			for (int j = 0; j < Board.NUMBER_OF_PLAYERS; j++) {
+				assertEquals(j + 1, session.get(i * 4 + j).getPiece());
+			}
+		}
+
 	}
 
 	/**
@@ -301,8 +377,7 @@ public class BoardTest {
 		List<Example> session = board.getWinnerSession();
 
 		// TODO Something is wrong here.
-		// TODO See the System.out.print-s in.
-		// testWinners()
+		// See the System.out.print-s in testWinners().
 		for (Example e : session) {
 			System.out.println(e.getPiece());
 		}
@@ -315,18 +390,16 @@ public class BoardTest {
 	 */
 	@Test
 	public void testNext() {
-		int turn = board.getTurn();
-
-		// TODO Test longer games as games with 100 moves.
-
 		/*
-		 * Next increments the turn counter by one.
+		 * Next increments the turn counter by one. Test that for many moves. A
+		 * typical game rarely lasts more than 100 moves.
 		 */
-		board.next();
-		assertEquals(turn + 1, board.getTurn());
-
-		board.next();
-		assertEquals(turn + 2, board.getTurn());
+		int moves = 100;
+		for (int i = 0; i < moves; i++) {
+			assertEquals(i, board.getTurn());
+			board.next();
+		}
+		assertEquals(moves, board.getTurn());
 	}
 
 	/**
@@ -334,20 +407,14 @@ public class BoardTest {
 	 */
 	@Test
 	public void testReset() {
-		/*
-		 * Select random player. Empty is not a player.
-		 */
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-		players.remove(0);
-		Collections.shuffle(players);
+		LinkedList<Piece> players = getPlayerPieces();
 
 		/*
 		 * Add a random number of pieces to random columns by random players.
 		 */
-		Random rand = new Random(); // TODO Use Util.PRNG
-		int numberOfPieces = rand.nextInt(Board.COLS * Board.ROWS);
+		int numberOfPieces = Util.PRNG.nextInt(Board.COLS * Board.ROWS);
 		for (int i = 0; i < numberOfPieces; i++) {
-			board.addTo(rand.nextInt(Board.COLS), players.get(rand.nextInt(Board.NUMBER_OF_PLAYERS)));
+			board.addTo(Util.PRNG.nextInt(Board.COLS), players.get(Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS)));
 		}
 
 		/*
@@ -383,17 +450,13 @@ public class BoardTest {
 		 * Add a random number of pieces to one random column by one random
 		 * player.
 		 */
-		Random rand = new Random(); //TODO Use Util.PRNG.
-		int numberOfPieces = rand.nextInt(Board.ROWS);
-		int column = rand.nextInt(Board.COLS);
+		int numberOfPieces = Util.PRNG.nextInt(Board.ROWS);
+		int column = Util.PRNG.nextInt(Board.COLS);
 
 		/*
-		 * Select random player. Empty is not a player.
+		 * Select a random player.
 		 */
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-		players.remove(0);
-		Collections.shuffle(players);
-		Piece player = players.get(0);
+		Piece player = getPlayerPieces().get(0);
 		for (int i = 0; i < numberOfPieces; i++) {
 			board.addTo(column, player);
 		}
@@ -402,8 +465,8 @@ public class BoardTest {
 		for (int i = 0; i < numberOfPieces; i++) {
 			assertEquals(player, pieces[column][Board.ROWS - 1 - i]);
 		}
-		
-		//TODO Test the cases when the column will be full and it will shift.
+
+		// TODO Test the cases when the column will be full and it will shift.
 	}
 
 	/**
@@ -412,63 +475,59 @@ public class BoardTest {
 	@Test
 	public void testHasWinner() {
 		/*
-		 * Select random player. Empty is not a player.
+		 * Select random player.
 		 */
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-		players.remove(0);
-		Collections.shuffle(players);
-
-		int player = new Random().nextInt(Board.NUMBER_OF_PLAYERS); //TODO Use Util.PRNG.
+		Piece player = getPlayerPieces().get(0);
 
 		Piece[][] pieces = board.getPieces();
 
-		//TODO Form vertical win combination in different positions.
+		// TODO Form vertical win combination in different positions.
 		/*
 		 * Vertical.
 		 */
-		pieces[0][0] = players.get(player);
-		pieces[0][1] = players.get(player);
-		pieces[0][2] = players.get(player);
-		pieces[0][3] = players.get(player);
+		pieces[0][0] = player;
+		pieces[0][1] = player;
+		pieces[0][2] = player;
+		pieces[0][3] = player;
 		assertTrue(board.hasWinner());
 
-		//TODO
+		// TODO
 		/*
 		 * Horizontal.
 		 */
 		board.reset();
 		pieces = board.getPieces();
-		pieces[0][0] = players.get(player);
-		pieces[1][0] = players.get(player);
-		pieces[2][0] = players.get(player);
-		pieces[3][0] = players.get(player);
+		pieces[0][0] = player;
+		pieces[1][0] = player;
+		pieces[2][0] = player;
+		pieces[3][0] = player;
 		assertTrue(board.hasWinner());
 
-		//TODO
+		// TODO
 		/*
 		 * Primary diagonal.
 		 */
 		board.reset();
 		pieces = board.getPieces();
-		pieces[3][0] = players.get(player);
-		pieces[2][1] = players.get(player);
-		pieces[1][2] = players.get(player);
-		pieces[0][3] = players.get(player);
+		pieces[3][0] = player;
+		pieces[2][1] = player;
+		pieces[1][2] = player;
+		pieces[0][3] = player;
 		assertTrue(board.hasWinner());
 
-		//TODO
+		// TODO
 		/*
 		 * Secondary diagonal.
 		 */
 		board.reset();
 		pieces = board.getPieces();
-		pieces[0][0] = players.get(player);
-		pieces[1][1] = players.get(player);
-		pieces[2][2] = players.get(player);
-		pieces[3][3] = players.get(player);
+		pieces[0][0] = player;
+		pieces[1][1] = player;
+		pieces[2][2] = player;
+		pieces[3][3] = player;
 		assertTrue(board.hasWinner());
-		
-		//TODO Test has winner when there is no winner.
+
+		// TODO Test has winner when there is no winner.
 	}
 
 	/**
@@ -495,27 +554,31 @@ public class BoardTest {
 
 		board.addTo(0, Piece.PLAYER4);
 		board.addTo(3, Piece.PLAYER1);
-		
-		//TODO Fix the comments below.
 
-		// should it be getWinners()? or defineWinners()?
 		int[][] winners = board.winners();
 
-		// PLAYER1 victory - bottom left to top right diagonal
+		/*
+		 * Player one wins with a diagonal from bottom left to top right.
+		 */
 		assertEquals(1, winners[0][Board.ROWS - 1]);
 		assertEquals(1, winners[1][Board.ROWS - 2]);
 		assertEquals(1, winners[2][Board.ROWS - 3]);
 		assertEquals(1, winners[3][Board.ROWS - 4]);
 
-		// PLAYER4 victory - bottom right to top left diagonal
+		/*
+		 * Player four wins with a diagonal from bottom right to top left.
+		 */
 		assertEquals(1, winners[3][Board.ROWS - 1]);
 		assertEquals(1, winners[2][Board.ROWS - 2]);
 		assertEquals(1, winners[1][Board.ROWS - 3]);
 		assertEquals(1, winners[0][Board.ROWS - 4]);
-		
-//		 for ( int i = 0; i < Board.COLS; i++ ) { for ( int j = 0; j <
-//		 Board.ROWS; j++ ) { System.out.print ( winners[i][j] + " " ); }
-//		 System.out.println (); }
+
+		// for (int i = 0; i < Board.COLS; i++) {
+		// for (int j = 0; j < Board.ROWS; j++) {
+		// System.out.print(winners[i][j] + " ");
+		// }
+		// System.out.println();
+		// }
 
 		board.reset();
 
@@ -531,16 +594,28 @@ public class BoardTest {
 
 		winners = board.winners();
 
-		// PLAYER3 victory - in a column
+		/*
+		 * Player three wins with a column.
+		 */
 		assertEquals(1, winners[4][Board.ROWS - 1]);
 		assertEquals(1, winners[4][Board.ROWS - 2]);
 		assertEquals(1, winners[4][Board.ROWS - 3]);
 		assertEquals(1, winners[4][Board.ROWS - 4]);
 
-		// PLAYER2 victory - in a row
+		/*
+		 * Player two wins with a row.
+		 */
 		assertEquals(1, winners[0][Board.ROWS - 1]);
 		assertEquals(1, winners[1][Board.ROWS - 1]);
 		assertEquals(1, winners[2][Board.ROWS - 1]);
 		assertEquals(1, winners[3][Board.ROWS - 1]);
+
+		// for ( int i = 0; i < Board.COLS; i++ ) {
+		// for ( int j = 0; j <
+		// Board.ROWS; j++ ) {
+		// System.out.print ( winners[i][j] + " " );
+		// }
+		// System.out.println ();
+		// }
 	}
 }

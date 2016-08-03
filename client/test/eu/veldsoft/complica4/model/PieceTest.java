@@ -32,8 +32,8 @@ public class PieceTest {
 	@Test
 	public void testMinId() {
 		assertEquals(0, Piece.minId());
-		
-		assertTrue (Piece.minId ()<Piece.maxId ());
+
+		assertTrue(Piece.minId() < Piece.maxId());
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class PieceTest {
 	public void testMaxId() {
 		assertEquals(4, Piece.maxId());
 
-		assertTrue (Piece.maxId ()>Piece.minId ());
+		assertTrue(Piece.maxId() > Piece.minId());
 	}
 
 }

@@ -1,5 +1,6 @@
 package eu.veldsoft.complica4.model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.encog.neural.networks.BasicNetwork;
@@ -8,6 +9,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 /**
  * 
  * @author Georgi
@@ -15,9 +17,6 @@ import org.junit.Test;
  * @see Util
  */
 public class UtilTest {
-
-	// TELL Todor that in Util.java lines 25 and 30 have the same comment. It is
-	// ambiguous.
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
