@@ -1,6 +1,6 @@
 package eu.veldsoft.complica4.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.encog.neural.networks.BasicNetwork;
 import org.junit.After;

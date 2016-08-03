@@ -24,11 +24,12 @@ import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
-import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
 /**
+ * Game screen.
  * 
  * @author Todor Balabanov
  */
@@ -49,22 +50,22 @@ public class GameActivity extends Activity {
 	private View.OnClickListener onClick[] = new View.OnClickListener[Board.COLS];
 
 	/**
-	 * 
+	 * Bot operation handler.
 	 */
-	private final Handler handler = new Handler();
+	private final Handler botHandler = new Handler();
 
 	/**
-	 * 
+	 * Pool with sounds.
 	 */
 	private SoundPool sounds = null;
 
 	/**
-	 * 
+	 * Click sound identifier.
 	 */
 	private int clickId = -1;
 
 	/**
-	 * 
+	 * Finish sound identifier.
 	 */
 	private int finishId = -1;
 
@@ -109,13 +110,13 @@ public class GameActivity extends Activity {
 			updateViews();
 
 			if (board.getTurn() % 4 != 0) {
-				handler.postDelayed(botAction, 500);
+				botHandler.postDelayed(botAction, 500);
 			}
 		}
 	};
 
 	/**
-	 * 
+	 * Start animation helper funcion.
 	 */
 	private void startAnimation() {
 		// TODO End animation listener.
@@ -217,7 +218,7 @@ public class GameActivity extends Activity {
 	}
 
 	/**
-	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -235,16 +236,16 @@ public class GameActivity extends Activity {
 		helper = new MovesHistoryDatabaseHelper(GameActivity.this);
 
 		BasicNetwork net = null;
-		//TODO net = loadFromServer();
+		// TODO net = loadFromServer();
 		if (net == null) {
 			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
 		}
 		bots = new ArtificialIntelligence[] {
 				new SimpleRulesArtificialIntelligence(),
-//				new NeuralNetworkArtificialIntelligence(net, Board.COLS
-//						* Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
-//						* Board.ROWS / 2, Board.COLS, Piece.getMinId(),
-//						Piece.getMaxId()),
+				// new NeuralNetworkArtificialIntelligence(net, Board.COLS
+				// * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
+				// * Board.ROWS / 2, Board.COLS, Piece.minId(),
+				// Piece.maxId()),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
@@ -326,7 +327,7 @@ public class GameActivity extends Activity {
 					updateViews();
 					sounds.play(clickId, 0.99f, 0.99f, 0, 0, 1);
 
-					handler.postDelayed(botAction, 500);
+					botHandler.postDelayed(botAction, 500);
 				}
 			};
 
@@ -343,6 +344,9 @@ public class GameActivity extends Activity {
 		startAnimation();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -350,6 +354,9 @@ public class GameActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -367,6 +374,9 @@ public class GameActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

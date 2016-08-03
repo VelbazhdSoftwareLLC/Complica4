@@ -44,7 +44,7 @@ public class Board {
 	/**
 	 * Pieces on the board object model.
 	 */
-	private Piece pieces[][] = {{}};
+	private Piece pieces[][] = { {} };
 
 	/**
 	 * Session history.
@@ -206,8 +206,8 @@ public class Board {
 		/*
 		 * If the column is empty.
 		 */
-		// TODO Do it with exception.
 		if (j == pieces[colunm].length) {
+			// TODO Do it with exception.
 			j = pieces[colunm].length - 1;
 		}
 
@@ -238,6 +238,7 @@ public class Board {
 	 * @return Two dimensional array with the pieces on the board.
 	 */
 	public Piece[][] getPieces() {
+		// TODO Do a deep copy.
 		return pieces;
 	}
 
@@ -278,6 +279,7 @@ public class Board {
 	 * @return Moves only done by the winner.
 	 */
 	public List<Example> getWinnerSession() {
+		// TODO Move this method in other class, which is much more proper.
 		List<Example> win = new ArrayList<Example>();
 
 		/*
@@ -304,10 +306,12 @@ public class Board {
 		 * Fill examples of the winners.
 		 */
 		for (Integer id : ids) {
+			// TODO Filling training examples should be responsibility to some
+			// other class.
 			for (int s = 0; s < session.size(); s++) {
 				if (s % NUMBER_OF_PLAYERS == (id - 1)) {
 					Example example = session.get(s);
-					example.rank = session.size();
+					example.setRank(session.size());
 					win.add(example);
 				}
 			}
@@ -316,10 +320,16 @@ public class Board {
 		return win;
 	}
 
+	/**
+	 * Mark the beginning of the next turn.
+	 */
 	public void next() {
 		turn++;
 	}
 
+	/**
+	 * Reset all board properties.
+	 */
 	public void reset() {
 		turn = 0;
 		gameOver = false;
@@ -332,13 +342,24 @@ public class Board {
 		session.clear();
 	}
 
-	public void addTo(int colunm, Piece piece) throws RuntimeException {
+	/**
+	 * Put piece in specified column.
+	 * 
+	 * @param colunm
+	 *            Index of the column to be used.
+	 * @param piece
+	 *            Piece to be placed.
+	 * 
+	 * @throws InvalidMoveException
+	 *             Exception if the piece can not be placed.
+	 */
+	public void addTo(int colunm, Piece piece) throws InvalidMoveException {
 		if (colunm < 0 || colunm >= COLS) {
-			throw new RuntimeException("Invalid column: " + colunm);
+			throw new InvalidMoveException("Invalid column: " + colunm);
 		}
 
 		if (piece == Piece.EMPTY) {
-			throw new RuntimeException("Invalid move.");
+			throw new InvalidMoveException("Invalid move.");
 		}
 
 		if (pieces[colunm][0] != Piece.EMPTY) {
@@ -357,6 +378,11 @@ public class Board {
 		addTop(colunm, piece);
 	}
 
+	/**
+	 * Check for the winner on the board.
+	 * 
+	 * @return True if there is a winner, false otherwise.
+	 */
 	public boolean hasWinner() {
 		for (int i = 0; i < pieces.length; i++) {
 			for (int j = 0; j < pieces[i].length; j++) {
@@ -386,6 +412,11 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * Generate matrix with all winners on the board.
+	 * 
+	 * @return Numerical matrix with the winners.
+	 */
 	public int[][] winners() {
 		int winners[][] = new int[COLS][ROWS];
 

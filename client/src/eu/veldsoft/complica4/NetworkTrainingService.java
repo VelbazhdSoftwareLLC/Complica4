@@ -1,6 +1,10 @@
 package eu.veldsoft.complica4;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Base64;
 import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Piece;
@@ -165,6 +170,9 @@ public class NetworkTrainingService extends Service {
 		return error;
 	}
 
+	/**
+	 * Load a ANN instance from the remote server, the local file or create new.
+	 */
 	private void loadNetwork() {
 		/*
 		 * Start network loading by disconnect the reference from the previous
@@ -216,7 +224,12 @@ public class NetworkTrainingService extends Service {
 			JSONObject result = new JSONObject(EntityUtils.toString(
 					response.getEntity(), "UTF-8"));
 			if (result.getBoolean(Util.JSON_FOUND_KEY) == true) {
-				net = (BasicNetwork) result.get(Util.JSON_OBJECT_KEY);
+				ObjectInputStream in = new ObjectInputStream(
+						new ByteArrayInputStream(Base64.decode(
+								(String) result.get(Util.JSON_OBJECT_KEY),
+								Base64.DEFAULT)));
+				net = (BasicNetwork) in.readObject();
+				in.close();
 			}
 		} catch (ClientProtocolException exception) {
 			net = null;
@@ -224,10 +237,10 @@ public class NetworkTrainingService extends Service {
 		} catch (IOException exception) {
 			net = null;
 			System.err.println(exception);
-		} catch (ParseException exception) {
+		} catch (JSONException exception) {
 			net = null;
 			System.err.println(exception);
-		} catch (JSONException exception) {
+		} catch (ClassNotFoundException exception) {
 			net = null;
 			System.err.println(exception);
 		}
@@ -249,6 +262,11 @@ public class NetworkTrainingService extends Service {
 		}
 	}
 
+	/**
+	 * Train single ANN.
+	 * 
+	 * @return Error calculated from ANN operation.
+	 */
 	private double trainNetwork() {
 		/*
 		 * Form training set.
@@ -276,10 +294,11 @@ public class NetworkTrainingService extends Service {
 			/*
 			 * Scale input in the range of [0.0-1.0].
 			 */
+			int[][] state = example.getState();
 			double input[] = new double[net.getInputCount()];
-			for (int i = 0, k = 0; i < example.state.length; i++) {
-				for (int j = 0; j < example.state[i].length; j++, k++) {
-					input[k] = (example.state[i][j] - min) / (max - min);
+			for (int i = 0, k = 0; i < state.length; i++) {
+				for (int j = 0; j < state[i].length; j++, k++) {
+					input[k] = (state[i][j] - min) / (max - min);
 				}
 			}
 
@@ -287,7 +306,7 @@ public class NetworkTrainingService extends Service {
 			 * Mark the player who is playing.
 			 */
 			for (int i = input.length - Board.NUMBER_OF_PLAYERS, p = 1; i < input.length; i++, p++) {
-				if (example.piece == p) {
+				if (example.getPiece() == p) {
 					input[i] = 1;
 				} else {
 					input[i] = 0;
@@ -299,7 +318,7 @@ public class NetworkTrainingService extends Service {
 			 */
 			double expected[] = new double[net.getOutputCount()];
 			for (int i = 0; i < expected.length; i++) {
-				if (example.colunm == i) {
+				if (example.getColunm() == i) {
 					expected[i] = 1;
 				} else {
 					expected[i] = 0;
@@ -328,6 +347,9 @@ public class NetworkTrainingService extends Service {
 		return net.calculateError(trainingSet);
 	}
 
+	/**
+	 * Save a ANN instance to the remote server and the local file.
+	 */
 	private void saveNetwork() {
 		/*
 		 * Save network to a file.
@@ -374,9 +396,16 @@ public class NetworkTrainingService extends Service {
 
 		JSONObject json = new JSONObject();
 		try {
-			json.put(Util.JSON_OBJECT_KEY, storeOnRemote);
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+			ObjectOutputStream out = new ObjectOutputStream(bytes);
+			out.writeObject(storeOnRemote);
+			json.put(Util.JSON_OBJECT_KEY,
+					Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT));
 			json.put(Util.JSON_RATING_KEY, annTrainingError);
+			out.close();
 		} catch (JSONException exception) {
+			System.err.println(exception);
+		} catch (IOException exception) {
 			System.err.println(exception);
 		}
 

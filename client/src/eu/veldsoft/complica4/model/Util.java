@@ -55,7 +55,7 @@ public class Util {
 	 * Consultant found data JSON key value.
 	 */
 	public static final String JSON_FOUND_KEY = "found";
-	
+
 	/**
 	 * Create new artificial neural network.
 	 * 

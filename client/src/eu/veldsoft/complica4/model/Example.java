@@ -6,25 +6,27 @@ package eu.veldsoft.complica4.model;
  * @author Todor Balabanov
  */
 public class Example {
+	// TODO Maybe this class should be in A.I. package.
+
 	/**
 	 * Playing player piece.
 	 */
-	public int piece;
+	private int piece;
 
 	/**
 	 * Played column.
 	 */
-	public int colunm;
+	private int colunm;
 
 	/**
 	 * Example rank. If it is high the rank is worse.
 	 */
-	public int rank;
+	private int rank;
 
 	/**
 	 * Board state before piece to be played.
 	 */
-	public int state[][] = { {} };
+	private int state[][] = { {} };
 
 	/**
 	 * Common constructor.
@@ -104,7 +106,7 @@ public class Example {
 	 * @param piece
 	 *            Playing player piece value.
 	 */
-	public void setPiece(int piece) {
+	private void setPiece(int piece) {
 		this.piece = piece;
 	}
 
@@ -123,7 +125,7 @@ public class Example {
 	 * @param colunm
 	 *            Index of the column to be played.
 	 */
-	public void setColunm(int colunm) {
+	private void setColunm(int colunm) {
 		this.colunm = colunm;
 	}
 
@@ -161,7 +163,7 @@ public class Example {
 	 * @param state
 	 *            Reference to the board state matrix.
 	 */
-	public void setState(int[][] state) {
+	private void setState(int[][] state) {
 		this.state = state;
 	}
 

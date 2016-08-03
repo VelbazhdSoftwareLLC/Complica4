@@ -8,7 +8,7 @@ package eu.veldsoft.complica4.model.ia;
 public class AlphaBetaArtificialIntelligence extends
 		AbstractArtificialIntelligence {
 	/**
-	 * {@inheritDoc}} 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public int move(int[][] state, int player) throws NoValidMoveException {
