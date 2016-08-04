@@ -1,13 +1,17 @@
 package eu.veldsoft.complica4.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import static eu.veldsoft.complica4.Utility.fillRandomly;
+import static eu.veldsoft.complica4.Utility.getPlayerPieces;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static eu.veldsoft.complica4.TestsUtility.*;
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the methods in the Board class.
@@ -49,7 +53,6 @@ public class BoardTest {
 		assertEquals(moves, board.getTurn());
 	}
 
-	// TODO Should one method test both isGameOver() and hasWinner()?
 	/**
 	 * Test to see if the program recognizes the end of the game.
 	 */
@@ -311,8 +314,7 @@ public class BoardTest {
 		board.hasWinner();
 		List<Example> session = board.getWinnerSession();
 
-		// TODO Something is wrong here.
-		// See the System.out.print-s in testWinners().
+		// TODO Use random board states.
 		for (Example e : session) {
 			System.out.println(e.getPiece());
 		}
@@ -495,7 +497,7 @@ public class BoardTest {
 			}
 		}
 
-		// TODO Test negative outcomes.
+		// TODO Test negative outcomes. Once with every type of filling.
 		/*
 		 * Generate some random boards that cannot result in a winner. Each
 		 * player will have placed three pieces, so there cannot be a sequence
@@ -514,7 +516,7 @@ public class BoardTest {
 	 */
 	@Test
 	public void testWinners() {
-		// TODO take a deep look at this and Board.winners()
+		// TODO Use randomly generated board.
 
 		board.addTo(0, Piece.PLAYER1);
 		board.addTo(1, Piece.PLAYER2);
@@ -552,9 +554,16 @@ public class BoardTest {
 		assertEquals(1, winners[1][Board.ROWS - 3]);
 		assertEquals(1, winners[0][Board.ROWS - 4]);
 
-		// for (int i = 0; i < Board.COLS; i++) {
 		// for (int j = 0; j < Board.ROWS; j++) {
-		// System.out.print(winners[i][j] + " ");
+		// for (int i = 0; i < Board.COLS; i++) {
+		// System.out.print(winners[i][j] + "\t");
+		// }
+		// System.out.println();
+		// }
+		// System.out.println();
+		// for (int j = 0; j < Board.ROWS; j++) {
+		// for (int i = 0; i < Board.COLS; i++) {
+		// System.out.print(board.getPieces()[i][j] + "\t");
 		// }
 		// System.out.println();
 		// }
@@ -589,12 +598,11 @@ public class BoardTest {
 		assertEquals(1, winners[2][Board.ROWS - 1]);
 		assertEquals(1, winners[3][Board.ROWS - 1]);
 
-		// for ( int i = 0; i < Board.COLS; i++ ) {
-		// for ( int j = 0; j <
-		// Board.ROWS; j++ ) {
-		// System.out.print ( winners[i][j] + " " );
+		// for (int j = 0; j < Board.ROWS; j++) {
+		// for (int i = 0; i < Board.COLS; i++) {
+		// System.out.print(winners[i][j] + " ");
 		// }
-		// System.out.println ();
+		// System.out.println();
 		// }
 	}
 }

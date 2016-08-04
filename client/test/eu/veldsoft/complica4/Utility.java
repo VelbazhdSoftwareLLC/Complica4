@@ -1,12 +1,12 @@
 package eu.veldsoft.complica4;
 
-import eu.veldsoft.complica4.model.Board;
-import eu.veldsoft.complica4.model.Piece;
-import eu.veldsoft.complica4.model.Util;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+
+import eu.veldsoft.complica4.model.Board;
+import eu.veldsoft.complica4.model.Piece;
+import eu.veldsoft.complica4.model.Util;
 
 /**
  * This class contains some methods that are used in the test classes to help
@@ -14,7 +14,12 @@ import java.util.LinkedList;
  *
  * @author Georgi Gospodinov
  */
-public class TestsUtility {
+final public class Utility {
+	/**
+	 * The class is used only with its static functions.
+	 */
+	private Utility() {
+	}
 
 	/**
 	 * Fill a board with a random amount of pieces. This method generates a
@@ -23,14 +28,17 @@ public class TestsUtility {
 	 *
 	 * @param boardToFill
 	 *            The board in which random pieces are put.
-	 * @see TestsUtility#fillRandomly(Board, int)
+	 * @return The board itself.
+	 * @see Utility#fillRandomly(Board, int)
 	 */
-	public static void fillRandomly(Board boardToFill) {
+	public static Board fillRandomly(Board boardToFill) {
 		/*
 		 * A typical game ends before each player has put 30 pieces.
 		 */
 		int piecesPerPlayer = Util.PRNG.nextInt(30);
 		fillRandomly(boardToFill, piecesPerPlayer);
+
+		return boardToFill;
 	}
 
 	/**
@@ -43,10 +51,11 @@ public class TestsUtility {
 	 *            The board in which random pieces are put.
 	 * @param piecesPerPlayer
 	 *            The amount of pieces to put for each player.
+	 * @return The board itself.
 	 * @see Board#getPieces()
-	 * @see TestsUtility#fillRandomly(Board)
+	 * @see Utility#fillRandomly(Board)
 	 */
-	public static void fillRandomly(Board boardToFill, int piecesPerPlayer) {
+	public static Board fillRandomly(Board boardToFill, int piecesPerPlayer) {
 		Piece[][] pieces = boardToFill.getPieces();
 		LinkedList<Piece> players = getPlayerPieces();
 		for (int i = 0; i < piecesPerPlayer; i++) {
@@ -54,7 +63,41 @@ public class TestsUtility {
 				pieces[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = player;
 			}
 		}
+
+		return boardToFill;
 	}
+
+	// TODO Fill board in 1/3.
+	// additionsNumber = PRNG.nextInt(5)-2 + ROWS*COS/3;
+	// addTo()
+
+	// TODO Fill board in 2/3.
+	// additionsNumber = PRNG.nextInt(5)-2 + 2*ROWS*COS/3;
+	// addTo()
+
+	// TODO Fill board totally.
+	// additionsNumber = ROWS*COLS
+	// addTo()
+
+	// TODO Remove winners.
+	// while(board.hasWinners() == true) {
+	// do{
+	// randX = random;
+	// randY = random;
+	// }while(piece[randX][radnY] == EMPTY);
+	//
+	// pieces[randX][randY] = randPiece();
+	// }
+
+	// TODO Generate at least one winner.
+	// while(board.hasWinners() == false) {
+	// do{
+	// randX = random;
+	// randY = random;
+	// }while(piece[randX][radnY] == EMPTY);
+	//
+	// pieces[randX][randY] = randPiece();
+	// }
 
 	/**
 	 * Create a LinkedList of all the player pieces. Then shuffle it. This

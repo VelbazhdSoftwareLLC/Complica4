@@ -11,8 +11,7 @@ import eu.veldsoft.complica4.model.Util;
  * 
  * @author Todor Balabanov
  */
-public class SimpleRulesArtificialIntelligence extends
-		AbstractArtificialIntelligence {
+public class SimpleRulesArtificialIntelligence extends AbstractArtificialIntelligence {
 	/**
 	 * Board state matrix.
 	 */
@@ -101,8 +100,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < WIN_LINE_LENGTH && (i + k) < state.length
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < WIN_LINE_LENGTH && (i + k) < state.length && (j + k) < state[i].length; k++) {
 					if (state[i + k][j + k] != player) {
 						break;
 					}
@@ -111,8 +109,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < WIN_LINE_LENGTH && (i - k) >= 0
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < WIN_LINE_LENGTH && (i - k) >= 0 && (j + k) < state[i].length; k++) {
 					if (state[i - k][j + k] != player) {
 						break;
 					}
@@ -159,8 +156,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < subLineLength && (i + k) < state.length
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < subLineLength && (i + k) < state.length && (j + k) < state[i].length; k++) {
 					if (state[i + k][j + k] != player) {
 						break;
 					}
@@ -169,8 +165,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < subLineLength && (i - k) >= 0
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < subLineLength && (i - k) >= 0 && (j + k) < state[i].length; k++) {
 					if (state[i - k][j + k] != player) {
 						break;
 					}
@@ -217,8 +212,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < subLineLength && (i + k) < state.length
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < subLineLength && (i + k) < state.length && (j + k) < state[i].length; k++) {
 					if (state[i + k][j + k] != player) {
 						break;
 					}
@@ -227,8 +221,7 @@ public class SimpleRulesArtificialIntelligence extends
 					return true;
 				}
 
-				for (k = 0; k < subLineLength && (i - k) >= 0
-						&& (j + k) < state[i].length; k++) {
+				for (k = 0; k < subLineLength && (i - k) >= 0 && (j + k) < state[i].length; k++) {
 					if (state[i - k][j + k] != player) {
 						break;
 					}

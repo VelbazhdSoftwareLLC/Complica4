@@ -11,8 +11,7 @@ import eu.veldsoft.complica4.model.Util;
  * 
  * @author Todor Balabanov
  */
-public class NeuralNetworkArtificialIntelligence extends
-		AbstractArtificialIntelligence {
+public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntelligence {
 
 	/**
 	 * Minimum value for normalization.
@@ -43,8 +42,8 @@ public class NeuralNetworkArtificialIntelligence extends
 	 * @param maxPiece
 	 *            Maximum integer identifier of a piece.
 	 */
-	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize,
-			int hiddenSize, int outputSize, int minPiece, int maxPiece) {
+	public NeuralNetworkArtificialIntelligence(BasicNetwork ann, int inputSize, int hiddenSize, int outputSize,
+			int minPiece, int maxPiece) {
 		min = minPiece;
 		max = maxPiece;
 

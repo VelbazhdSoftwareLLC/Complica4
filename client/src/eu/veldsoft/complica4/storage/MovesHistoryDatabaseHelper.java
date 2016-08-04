@@ -32,19 +32,16 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * Create table SQL patter.
 	 */
-	private static final String SQL_CREATE_HISTORY = "CREATE TABLE "
-			+ MovesHistoryColumns.TABLE_NAME + " (" + MovesHistoryColumns._ID
-			+ " INTEGER PRIMARY KEY," + MovesHistoryColumns.COLUMN_NAME_PIECE
-			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_COLUNM
-			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_RANK
-			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_STATE + " TEXT, "
-			+ MovesHistoryColumns.COLUMN_NAME_TIME + " INTEGER)";
+	private static final String SQL_CREATE_HISTORY = "CREATE TABLE " + MovesHistoryColumns.TABLE_NAME + " ("
+			+ MovesHistoryColumns._ID + " INTEGER PRIMARY KEY," + MovesHistoryColumns.COLUMN_NAME_PIECE + " INTEGER, "
+			+ MovesHistoryColumns.COLUMN_NAME_COLUNM + " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_RANK
+			+ " INTEGER, " + MovesHistoryColumns.COLUMN_NAME_STATE + " TEXT, " + MovesHistoryColumns.COLUMN_NAME_TIME
+			+ " INTEGER)";
 
 	/**
 	 * Drop database SQL pattern.
 	 */
-	static final String SQL_DELETE_HISTORY = "DROP TABLE IF EXISTS "
-			+ MovesHistoryColumns.TABLE_NAME;
+	static final String SQL_DELETE_HISTORY = "DROP TABLE IF EXISTS " + MovesHistoryColumns.TABLE_NAME;
 
 	/**
 	 * Database integer version.
@@ -109,10 +106,8 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 		values.put(MovesHistoryColumns.COLUMN_NAME_RANK, move.getRank());
 		values.put(MovesHistoryColumns.COLUMN_NAME_COLUNM, move.getColunm());
 		values.put(MovesHistoryColumns.COLUMN_NAME_STATE, state);
-		values.put(MovesHistoryColumns.COLUMN_NAME_TIME,
-				System.currentTimeMillis() / 1000L);
-		getWritableDatabase().insert(MovesHistoryColumns.TABLE_NAME, null,
-				values);
+		values.put(MovesHistoryColumns.COLUMN_NAME_TIME, System.currentTimeMillis() / 1000L);
+		getWritableDatabase().insert(MovesHistoryColumns.TABLE_NAME, null, values);
 	}
 
 	/**
@@ -121,10 +116,8 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 	 * @return True if there is a move, false otherwise.
 	 */
 	public boolean hasMove() {
-		Cursor cursor = getReadableDatabase().query(
-				MovesHistoryColumns.TABLE_NAME,
-				new String[] { MovesHistoryColumns._ID }, null, null, null,
-				null, null, "1");
+		Cursor cursor = getReadableDatabase().query(MovesHistoryColumns.TABLE_NAME,
+				new String[] { MovesHistoryColumns._ID }, null, null, null, null, null, "1");
 
 		boolean empty = false;
 		if (cursor.getCount() == 0) {
@@ -157,14 +150,11 @@ public class MovesHistoryDatabaseHelper extends SQLiteOpenHelper {
 			throw new RuntimeException("Negative index is not possible.");
 		}
 
-		Cursor cursor = getReadableDatabase().query(
-				MovesHistoryColumns.TABLE_NAME,
-				new String[] { MovesHistoryColumns.COLUMN_NAME_PIECE,
-						MovesHistoryColumns.COLUMN_NAME_COLUNM,
-						MovesHistoryColumns.COLUMN_NAME_RANK,
-						MovesHistoryColumns.COLUMN_NAME_STATE,
-						MovesHistoryColumns.COLUMN_NAME_TIME }, null, null,
-				null, null, MovesHistoryColumns._ID + " ASC", "1");
+		Cursor cursor = getReadableDatabase().query(MovesHistoryColumns.TABLE_NAME,
+				new String[] { MovesHistoryColumns.COLUMN_NAME_PIECE, MovesHistoryColumns.COLUMN_NAME_COLUNM,
+						MovesHistoryColumns.COLUMN_NAME_RANK, MovesHistoryColumns.COLUMN_NAME_STATE,
+						MovesHistoryColumns.COLUMN_NAME_TIME },
+				null, null, null, null, MovesHistoryColumns._ID + " ASC", "1");
 
 		/*
 		 * If the database table is empty no example object can be created.

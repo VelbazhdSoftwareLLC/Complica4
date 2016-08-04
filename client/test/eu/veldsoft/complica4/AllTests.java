@@ -17,13 +17,10 @@ import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligenceTest;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligenceTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ BoardTest.class, ExampleTest.class, PieceTest.class,
-		UtilTest.class, AbstractArtificialIntelligenceTest.class,
-		AlphaBetaArtificialIntelligenceTest.class,
-		ArtificialIntelligenceTest.class,
-		NeuralNetworkArtificialIntelligenceTest.class,
-		NoValidMoveExceptionTest.class, RandomArtificialIntelligenceTest.class,
-		SimpleRulesArtificialIntelligenceTest.class })
+@SuiteClasses({ BoardTest.class, ExampleTest.class, PieceTest.class, UtilTest.class,
+		AbstractArtificialIntelligenceTest.class, AlphaBetaArtificialIntelligenceTest.class,
+		ArtificialIntelligenceTest.class, NeuralNetworkArtificialIntelligenceTest.class, NoValidMoveExceptionTest.class,
+		RandomArtificialIntelligenceTest.class, SimpleRulesArtificialIntelligenceTest.class })
 public class AllTests {
 
 }

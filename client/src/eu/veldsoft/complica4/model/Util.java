@@ -68,8 +68,7 @@ public class Util {
 	 * 
 	 * @return Neural network created object.
 	 */
-	public static BasicNetwork newNetwork(int inputSize, int hiddenSize,
-			int outputSize) {
+	public static BasicNetwork newNetwork(int inputSize, int hiddenSize, int outputSize) {
 		BasicNetwork net = new BasicNetwork();
 
 		net.addLayer(new BasicLayer(null, true, inputSize));
@@ -93,8 +92,7 @@ public class Util {
 		BasicNetwork ann = null;
 
 		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-					name));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(name));
 			ann = (BasicNetwork) in.readObject();
 			in.close();
 		} catch (Exception ex) {
@@ -113,8 +111,7 @@ public class Util {
 	 */
 	public static void saveToFile(BasicNetwork ann, String name) {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(
-					new FileOutputStream(name));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(name));
 			out.writeObject(ann);
 			out.close();
 		} catch (Exception ex) {

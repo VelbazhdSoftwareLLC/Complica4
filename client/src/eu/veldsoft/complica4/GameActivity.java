@@ -25,7 +25,6 @@ import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
-import eu.veldsoft.complica4.model.ia.NeuralNetworkArtificialIntelligence;
 import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
 /**
@@ -197,9 +196,7 @@ public class GameActivity extends Activity {
 			 */
 			storeTrainingExamples(board.getWinnerSession());
 
-			Toast.makeText(this,
-					getResources().getString(R.string.game_over_message),
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(this, getResources().getString(R.string.game_over_message), Toast.LENGTH_LONG).show();
 			sounds.play(finishId, 0.99f, 0.99f, 0, 0, 1);
 		}
 
@@ -240,14 +237,12 @@ public class GameActivity extends Activity {
 		if (net == null) {
 			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
 		}
-		bots = new ArtificialIntelligence[] {
-				new SimpleRulesArtificialIntelligence(),
+		bots = new ArtificialIntelligence[] { new SimpleRulesArtificialIntelligence(),
 				// new NeuralNetworkArtificialIntelligence(net, Board.COLS
 				// * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
 				// * Board.ROWS / 2, Board.COLS, Piece.minId(),
 				// Piece.maxId()),
-				new SimpleRulesArtificialIntelligence(),
-				new SimpleRulesArtificialIntelligence(),
+				new SimpleRulesArtificialIntelligence(), new SimpleRulesArtificialIntelligence(),
 				new SimpleRulesArtificialIntelligence(), };
 
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);

@@ -28,8 +28,7 @@ public interface ArtificialIntelligence {
 	/**
 	 * All possible integer values on the board.
 	 */
-	static final Set<Integer> STATE_VALUES = new HashSet<Integer>(
-			Arrays.asList(new Integer[] { 0, 1, 2, 3, 4 }));
+	static final Set<Integer> STATE_VALUES = new HashSet<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4 }));
 
 	/**
 	 * Size of the win line.

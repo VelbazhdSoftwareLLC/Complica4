@@ -1,13 +1,13 @@
 package eu.veldsoft.complica4.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import static eu.veldsoft.complica4.Utility.getPlayerPieces;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
 
-import static eu.veldsoft.complica4.TestsUtility.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the methods in the Example class.
@@ -37,6 +37,7 @@ public class ExampleTest {
 		example = new Example(DEFAULT_STATE, DEFAULT_PIECE_ID, DEFAULT_COLUMN, DEFAULT_RANK);
 	}
 
+	// TODO remove this test
 	/**
 	 * Tests to see if the common constructor assigns the correct values to the
 	 * fields.
