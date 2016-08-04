@@ -1,13 +1,21 @@
 package eu.veldsoft.complica4.model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.encog.neural.networks.BasicNetwork;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * 
+ * @author Georgi
+ *
+ * @see Util
+ */
 public class UtilTest {
 
 	@BeforeClass
@@ -28,7 +36,13 @@ public class UtilTest {
 
 	@Test
 	public void testNewNetwork() {
-		fail("Not yet implemented");
+		int inputSize = 3, hiddenSize = 2, outputSize = 3;
+		BasicNetwork net = Util.newNetwork(inputSize, hiddenSize, outputSize);
+
+		assertEquals(inputSize, net.getInputCount());// 0th layer (input)
+		assertEquals(hiddenSize, net.getLayerNeuronCount(1));// 1st layer
+																// (hidden)
+		assertEquals(outputSize, net.getOutputCount());// 2nd layer (output)
 	}
 
 	@Test

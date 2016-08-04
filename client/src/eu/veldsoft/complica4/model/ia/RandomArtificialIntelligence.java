@@ -7,8 +7,7 @@ import eu.veldsoft.complica4.model.Util;
  * 
  * @author Todor Balabanov
  */
-public class RandomArtificialIntelligence extends
-		AbstractArtificialIntelligence {
+public class RandomArtificialIntelligence extends AbstractArtificialIntelligence {
 	/**
 	 * {@inheritDoc}
 	 */

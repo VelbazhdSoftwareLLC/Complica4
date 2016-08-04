@@ -428,6 +428,10 @@ public class Board {
 
 		for (int i = 0; i < winners.length; i++) {
 			for (int j = 0; j < winners[i].length; j++) {
+				if (pieces[i][j] == Piece.EMPTY) {
+					continue;
+				}
+
 				if (hasHorizontalLine(i, j) == true) {
 					for (int k = 0; k < WIN_LINE_LENGTH; k++) {
 						winners[i + k][j] = 1;

@@ -79,8 +79,7 @@ public class NetworkTrainingService extends Service {
 		 * Do not set if it is already there.
 		 */
 		if (PendingIntent.getBroadcast(this, Util.ALARM_REQUEST_CODE,
-				new Intent(getApplicationContext(),
-						NetworkTrainingService.class),
+				new Intent(getApplicationContext(), NetworkTrainingService.class),
 				PendingIntent.FLAG_NO_CREATE) != null) {
 			return;
 		}
@@ -91,22 +90,19 @@ public class NetworkTrainingService extends Service {
 		long interval = AlarmManager.INTERVAL_HALF_HOUR;
 		try {
 			interval = getPackageManager().getServiceInfo(
-					new ComponentName(NetworkTrainingService.this,
-							NetworkTrainingService.this.getClass()),
-					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
-					.getInt("interval", (int) AlarmManager.INTERVAL_HALF_HOUR);
+					new ComponentName(NetworkTrainingService.this, NetworkTrainingService.this.getClass()),
+					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData.getInt("interval",
+							(int) AlarmManager.INTERVAL_HALF_HOUR);
 		} catch (NameNotFoundException exception) {
 			interval = AlarmManager.INTERVAL_HALF_HOUR;
 			System.err.println(exception);
 		}
 
-		((AlarmManager) this.getSystemService(Context.ALARM_SERVICE))
-				.setInexactRepeating(AlarmManager.RTC_WAKEUP, System
-						.currentTimeMillis(), interval, PendingIntent
-						.getBroadcast(this, Util.ALARM_REQUEST_CODE,
-								new Intent(getApplicationContext(),
-										NetworkTrainingReceiver.class),
-								PendingIntent.FLAG_UPDATE_CURRENT));
+		((AlarmManager) this.getSystemService(Context.ALARM_SERVICE)).setInexactRepeating(AlarmManager.RTC_WAKEUP,
+				System.currentTimeMillis(), interval,
+				PendingIntent.getBroadcast(this, Util.ALARM_REQUEST_CODE,
+						new Intent(getApplicationContext(), NetworkTrainingReceiver.class),
+						PendingIntent.FLAG_UPDATE_CURRENT));
 	}
 
 	/**
@@ -117,8 +113,7 @@ public class NetworkTrainingService extends Service {
 	private double obtainRemoveBestError() {
 		String host = "";
 		try {
-			host = getPackageManager().getApplicationInfo(
-					NetworkTrainingService.this.getPackageName(),
+			host = getPackageManager().getApplicationInfo(NetworkTrainingService.this.getPackageName(),
 					PackageManager.GET_META_DATA).metaData.getString("host");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
@@ -128,18 +123,16 @@ public class NetworkTrainingService extends Service {
 		String script = "";
 		try {
 			script = getPackageManager().getServiceInfo(
-					new ComponentName(NetworkTrainingService.this,
-							NetworkTrainingService.this.getClass()),
+					new ComponentName(NetworkTrainingService.this, NetworkTrainingService.this.getClass()),
 					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
-					.getString("best_rating_script");
+							.getString("best_rating_script");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
 			return Double.MAX_VALUE;
 		}
 
 		HttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter("http.protocol.content-charset",
-				"UTF-8");
+		client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
 		HttpPost post = new HttpPost("http://" + host + "/" + script);
 
 		JSONObject json = new JSONObject();
@@ -154,8 +147,7 @@ public class NetworkTrainingService extends Service {
 		double error = Double.MAX_VALUE;
 		try {
 			HttpResponse response = client.execute(post);
-			JSONObject result = new JSONObject(EntityUtils.toString(
-					response.getEntity(), "UTF-8"));
+			JSONObject result = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
 			error = result.getDouble(Util.JSON_RATING_KEY);
 		} catch (ClientProtocolException exception) {
 			System.err.println(exception);
@@ -185,8 +177,7 @@ public class NetworkTrainingService extends Service {
 		 */
 		String host = "";
 		try {
-			host = getPackageManager().getApplicationInfo(
-					NetworkTrainingService.this.getPackageName(),
+			host = getPackageManager().getApplicationInfo(NetworkTrainingService.this.getPackageName(),
 					PackageManager.GET_META_DATA).metaData.getString("host");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
@@ -196,18 +187,16 @@ public class NetworkTrainingService extends Service {
 		String script = "";
 		try {
 			script = getPackageManager().getServiceInfo(
-					new ComponentName(NetworkTrainingService.this,
-							NetworkTrainingService.this.getClass()),
+					new ComponentName(NetworkTrainingService.this, NetworkTrainingService.this.getClass()),
 					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
-					.getString("load_neural_network_script");
+							.getString("load_neural_network_script");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
 			return;
 		}
 
 		HttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter("http.protocol.content-charset",
-				"UTF-8");
+		client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
 		HttpPost post = new HttpPost("http://" + host + "/" + script);
 
 		JSONObject json = new JSONObject();
@@ -221,13 +210,10 @@ public class NetworkTrainingService extends Service {
 
 		try {
 			HttpResponse response = client.execute(post);
-			JSONObject result = new JSONObject(EntityUtils.toString(
-					response.getEntity(), "UTF-8"));
+			JSONObject result = new JSONObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
 			if (result.getBoolean(Util.JSON_FOUND_KEY) == true) {
-				ObjectInputStream in = new ObjectInputStream(
-						new ByteArrayInputStream(Base64.decode(
-								(String) result.get(Util.JSON_OBJECT_KEY),
-								Base64.DEFAULT)));
+				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
+						Base64.decode((String) result.get(Util.JSON_OBJECT_KEY), Base64.DEFAULT)));
 				net = (BasicNetwork) in.readObject();
 				in.close();
 			}
@@ -256,8 +242,7 @@ public class NetworkTrainingService extends Service {
 		 * Create new network if there is no network in the file.
 		 */
 		if (net == null) {
-			net = Util.newNetwork(Board.COLS * Board.ROWS
-					+ Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS / 2,
+			net = Util.newNetwork(Board.COLS * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS * Board.ROWS / 2,
 					Board.COLS);
 		}
 	}
@@ -273,10 +258,8 @@ public class NetworkTrainingService extends Service {
 		 */
 		double min = Piece.minId();
 		double max = Piece.maxId();
-		double inputSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
-				.getInputCount()];
-		double expectedSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net
-				.getOutputCount()];
+		double inputSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net.getInputCount()];
+		double expectedSet[][] = new double[Util.NUMBER_OF_SINGLE_TRAINING_EXAMPLES][net.getOutputCount()];
 
 		/*
 		 * If there is no training examples do nothing.
@@ -369,8 +352,7 @@ public class NetworkTrainingService extends Service {
 		 */
 		String host = "";
 		try {
-			host = getPackageManager().getApplicationInfo(
-					NetworkTrainingService.this.getPackageName(),
+			host = getPackageManager().getApplicationInfo(NetworkTrainingService.this.getPackageName(),
 					PackageManager.GET_META_DATA).metaData.getString("host");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
@@ -380,18 +362,16 @@ public class NetworkTrainingService extends Service {
 		String script = "";
 		try {
 			script = getPackageManager().getServiceInfo(
-					new ComponentName(NetworkTrainingService.this,
-							NetworkTrainingService.this.getClass()),
+					new ComponentName(NetworkTrainingService.this, NetworkTrainingService.this.getClass()),
 					PackageManager.GET_SERVICES | PackageManager.GET_META_DATA).metaData
-					.getString("save_neural_network_script");
+							.getString("save_neural_network_script");
 		} catch (NameNotFoundException exception) {
 			System.err.println(exception);
 			return;
 		}
 
 		HttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter("http.protocol.content-charset",
-				"UTF-8");
+		client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
 		HttpPost post = new HttpPost("http://" + host + "/" + script);
 
 		JSONObject json = new JSONObject();
@@ -399,8 +379,7 @@ public class NetworkTrainingService extends Service {
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 			ObjectOutputStream out = new ObjectOutputStream(bytes);
 			out.writeObject(storeOnRemote);
-			json.put(Util.JSON_OBJECT_KEY,
-					Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT));
+			json.put(Util.JSON_OBJECT_KEY, Base64.encodeToString(bytes.toByteArray(), Base64.DEFAULT));
 			json.put(Util.JSON_RATING_KEY, annTrainingError);
 			out.close();
 		} catch (JSONException exception) {

@@ -5,8 +5,7 @@ package eu.veldsoft.complica4.model.ia;
  * 
  * @author Todor Balabanov
  */
-public class AlphaBetaArtificialIntelligence extends
-		AbstractArtificialIntelligence {
+public class AlphaBetaArtificialIntelligence extends AbstractArtificialIntelligence {
 	/**
 	 * {@inheritDoc}
 	 */
