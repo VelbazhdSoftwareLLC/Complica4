@@ -1,10 +1,13 @@
 package eu.veldsoft.complica4.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.LinkedList;
+
+import static eu.veldsoft.complica4.TestsUtility.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests the methods in the Example class.
@@ -14,7 +17,11 @@ import org.junit.Test;
  */
 public class ExampleTest {
 
-	private static final int DEFAULT_PIECE_ID = Piece.PLAYER1.getId();
+	// TODO There are three methods in Example that are not used: setPiece(),
+	// setColumn(), setState().
+
+	private static final Piece DEFAULT_PIECE = Piece.PLAYER1;
+	private static final int DEFAULT_PIECE_ID = DEFAULT_PIECE.getId();
 	private static final int DEFAULT_COLUMN = 1;
 	private static final int DEFAULT_RANK = 30;
 	private static final int[][] DEFAULT_STATE = { { 0 } };
@@ -37,16 +44,30 @@ public class ExampleTest {
 	@Test
 	public void testExampleIntIntInt() {
 
-		Example example1 = new Example(new int[][] { {} }, DEFAULT_PIECE_ID, DEFAULT_COLUMN, DEFAULT_RANK);
-		Example example2 = new Example(new Piece[][] { {} }, Piece.PLAYER1, DEFAULT_COLUMN, DEFAULT_RANK);
+		/*
+		 * Generate some random values for the constructor. Games rarely last
+		 * longer than 100 turns.
+		 */
+		int column = Util.PRNG.nextInt(Board.COLS);
+		int rank = Util.PRNG.nextInt(100);
+		Piece piece = getPlayerPieces().get(0);
 
-		assertEquals(DEFAULT_PIECE_ID, example1.getPiece());
-		assertEquals(DEFAULT_COLUMN, example1.getColunm());
-		assertEquals(DEFAULT_RANK, example1.getRank());
+		/*
+		 * The constructor that needs to be tested has private access, so
+		 * instead the two constructors that use it are called here. The
+		 * differences they have can be neglected because their states are
+		 * empty.
+		 */
+		Example example1 = new Example(new int[][] { {} }, piece.getId(), column, rank);
+		Example example2 = new Example(new Piece[][] { {} }, piece, column, rank);
 
-		assertEquals(DEFAULT_PIECE_ID, example2.getPiece());
-		assertEquals(DEFAULT_COLUMN, example2.getColunm());
-		assertEquals(DEFAULT_RANK, example2.getRank());
+		assertEquals(piece.getId(), example1.getPiece());
+		assertEquals(column, example1.getColunm());
+		assertEquals(rank, example1.getRank());
+
+		assertEquals(piece.getId(), example2.getPiece());
+		assertEquals(column, example2.getColunm());
+		assertEquals(rank, example2.getRank());
 
 	}
 
@@ -60,20 +81,26 @@ public class ExampleTest {
 		int[][] state = new int[Board.COLS][Board.ROWS];
 
 		/*
-		 * Five random pairs of (column,row) to put random pieces in.
+		 * Put a random amount of pieces on the board.
 		 */
-		for (int i = 0; i < 5; i++) {
-			int c = Util.PRNG.nextInt(Board.COLS);
-			int r = Util.PRNG.nextInt(Board.ROWS);
-
-			state[c][r] = Util.PRNG.nextInt(Piece.maxId() + 1);
+		int amount = Util.PRNG.nextInt(100);
+		for (int i = 0; i < amount; i++) {
+			state[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = Util.PRNG.nextInt(Piece.maxId()) + 1;
 		}
 
-		example = new Example(state, DEFAULT_PIECE_ID, DEFAULT_COLUMN, DEFAULT_RANK);
+		/*
+		 * Generate some random values for the constructor. Games rarely last
+		 * longer than 100 turns.
+		 */
+		int column = Util.PRNG.nextInt(Board.COLS);
+		int rank = Util.PRNG.nextInt(100);
+		int piece = getPlayerPieces().get(0).getId();
 
-		assertEquals(DEFAULT_PIECE_ID, example.getPiece());
-		assertEquals(DEFAULT_COLUMN, example.getColunm());
-		assertEquals(DEFAULT_RANK, example.getRank());
+		example = new Example(state, piece, column, rank);
+
+		assertEquals(piece, example.getPiece());
+		assertEquals(column, example.getColunm());
+		assertEquals(rank, example.getRank());
 
 		int[][] exampleState = example.getState();
 
@@ -93,21 +120,29 @@ public class ExampleTest {
 	public void testExamplePieceArrayArrayPieceIntInt() {
 		Piece[][] state = new Piece[Board.COLS][Board.ROWS];
 
+		LinkedList<Piece> players = getPlayerPieces();
 		/*
-		 * Five random pairs of (column,row) to put random pieces in.
+		 * Put a random amount of pieces on the board.
 		 */
-		for (int i = 0; i < 5; i++) {
-			int c = Util.PRNG.nextInt(Board.COLS);
-			int r = Util.PRNG.nextInt(Board.ROWS);
-
-			state[c][r] = Piece.values()[Util.PRNG.nextInt(Piece.maxId() + 1)];
+		int amount = Util.PRNG.nextInt(100);
+		for (int i = 0; i < amount; i++) {
+			state[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = players
+					.get(Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS));
 		}
 
-		example = new Example(state, Piece.values()[DEFAULT_PIECE_ID], DEFAULT_COLUMN, DEFAULT_RANK);
+		/*
+		 * Generate some random values for the constructor. Games rarely last
+		 * longer than 100 turns.
+		 */
+		int column = Util.PRNG.nextInt(Board.COLS);
+		int rank = Util.PRNG.nextInt(100);
+		Piece piece = getPlayerPieces().get(0);
 
-		assertEquals(DEFAULT_PIECE_ID, example.getPiece());
-		assertEquals(DEFAULT_COLUMN, example.getColunm());
-		assertEquals(DEFAULT_RANK, example.getRank());
+		example = new Example(state, piece, column, rank);
+
+		assertEquals(piece.getId(), example.getPiece());
+		assertEquals(column, example.getColunm());
+		assertEquals(rank, example.getRank());
 
 		int[][] exampleState = example.getState();
 
@@ -137,10 +172,6 @@ public class ExampleTest {
 	public void testSetState() {
 		fail("Not yet implemented");
 	}
-
-	/*
-	 * Example - get/set Column and Rank are not used or my code is not updated
-	 */
 
 	@Test
 	public void testGetColumn() {

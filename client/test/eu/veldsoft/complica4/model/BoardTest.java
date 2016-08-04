@@ -1,17 +1,13 @@
 package eu.veldsoft.complica4.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static eu.veldsoft.complica4.TestsUtility.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests the methods in the Board class.
@@ -21,73 +17,10 @@ import org.junit.Test;
  */
 public class BoardTest {
 
-	// TODO Fill in the comments with more depth.
-	// This is done while writing the tests.
-
 	/**
 	 * Board object used in all test methods and the setUp method.
 	 */
 	private Board board = new Board();
-
-	/**
-	 * Fill a board with a random amount of pieces. This method generates a
-	 * random number for the amount of pieces to put for each player and then
-	 * calls the other fillRandomly method.
-	 *
-	 * @param boardToFill
-	 *            The board in which random pieces are put.
-	 * @see BoardTest#fillRandomly(Board, int)
-	 */
-	private static void fillRandomly(Board boardToFill) {
-		/*
-		 * A typical game ends before each player has put 30 pieces.
-		 */
-		int piecesPerPlayer = Util.PRNG.nextInt(30);
-		fillRandomly(boardToFill, piecesPerPlayer);
-	}
-
-	/**
-	 * Fill a board with a given amount of pieces. This method makes use of the
-	 * fact that Board.getPieces() returns a pointer to the original array and
-	 * not a deep copy. This method is often called by the other fillRandomly
-	 * method.
-	 *
-	 * @param boardToFill
-	 *            The board in which random pieces are put.
-	 * @param piecesPerPlayer
-	 *            The amount of pieces to put for each player.
-	 * @see Board#getPieces()
-	 * @see BoardTest#fillRandomly(Board)
-	 */
-	private static void fillRandomly(Board boardToFill, int piecesPerPlayer) {
-		Piece[][] pieces = boardToFill.getPieces();
-		LinkedList<Piece> players = getPlayerPieces();
-		for (int i = 0; i < piecesPerPlayer; i++) {
-			for (Piece player : players) {
-				pieces[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = player;
-			}
-		}
-	}
-
-	/**
-	 * Create a LinkedList of all the player pieces. Then shuffle it. This
-	 * method is often called with get(0) because a random player is needed.
-	 * Since players are shuffled, the first element in the list will always be
-	 * different.
-	 *
-	 * @return The shuffled List of Pieces.
-	 */
-	private static LinkedList<Piece> getPlayerPieces() {
-		LinkedList<Piece> players = new LinkedList<Piece>(Arrays.asList(Piece.values()));
-
-		/*
-		 * Empty is not a player.
-		 */
-		players.remove(Piece.EMPTY);
-		Collections.shuffle(players);
-
-		return players;
-	}
 
 	/**
 	 * A preparation before each test.
@@ -116,6 +49,7 @@ public class BoardTest {
 		assertEquals(moves, board.getTurn());
 	}
 
+	// TODO Should one method test both isGameOver() and hasWinner()?
 	/**
 	 * Test to see if the program recognizes the end of the game.
 	 */
@@ -285,17 +219,18 @@ public class BoardTest {
 			}
 		}
 
-		LinkedList<Piece> players = getPlayerPieces();
+		fillRandomly(board);
+		state = board.getState();
+		Piece[][] pieces = board.getPieces();
+
 		/*
-		 * Add a piece to each column.
+		 * The state array should match the ID-s of the pieces.
 		 */
 		for (int i = 0; i < Board.COLS; i++) {
-			int index = Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS);
-			board.addTo(i, players.get(index));
-			assertEquals(players.get(index).getId(), board.getState()[i][Board.ROWS - 1]);
+			for (int j = 0; j < Board.ROWS; j++) {
+				assertEquals(pieces[i][j].getId(), state[i][j]);
+			}
 		}
-
-		// TODO Test rows other than the bottom.
 	}
 
 	/**
@@ -448,9 +383,9 @@ public class BoardTest {
 	public void testAddTo() {
 		/*
 		 * Add a random number of pieces to one random column by one random
-		 * player.
+		 * player. Games rarely last more than 100 turns.
 		 */
-		int numberOfPieces = Util.PRNG.nextInt(Board.ROWS);
+		int numberOfPieces = Util.PRNG.nextInt(100 / Board.NUMBER_OF_PLAYERS);
 		int column = Util.PRNG.nextInt(Board.COLS);
 
 		/*
@@ -465,8 +400,6 @@ public class BoardTest {
 		for (int i = 0; i < numberOfPieces; i++) {
 			assertEquals(player, pieces[column][Board.ROWS - 1 - i]);
 		}
-
-		// TODO Test the cases when the column will be full and it will shift.
 	}
 
 	/**
@@ -475,59 +408,105 @@ public class BoardTest {
 	@Test
 	public void testHasWinner() {
 		/*
+		 * No winner at start.
+		 */
+		assertFalse(board.hasWinner());
+
+		/*
 		 * Select random player.
 		 */
 		Piece player = getPlayerPieces().get(0);
+		Piece[][] pieces;
 
-		Piece[][] pieces = board.getPieces();
-
-		// TODO Form vertical win combination in different positions.
 		/*
-		 * Vertical.
+		 * Vertical wins. Winner should be recognized for all possible
+		 * combinations of four in every column.
 		 */
-		pieces[0][0] = player;
-		pieces[0][1] = player;
-		pieces[0][2] = player;
-		pieces[0][3] = player;
-		assertTrue(board.hasWinner());
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
 
-		// TODO
+				pieces[i][j] = player;
+				pieces[i][j + 1] = player;
+				pieces[i][j + 2] = player;
+				pieces[i][j + 3] = player;
+
+				assertTrue(board.hasWinner());
+			}
+		}
+
 		/*
-		 * Horizontal.
+		 * Horizontal wins. Winner should be recognized for all possible
+		 * combinations of four in every row.
 		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[0][0] = player;
-		pieces[1][0] = player;
-		pieces[2][0] = player;
-		pieces[3][0] = player;
-		assertTrue(board.hasWinner());
+		for (int i = 0; i < Board.ROWS; i++) {
 
-		// TODO
+			for (int j = 0; j < Board.COLS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
+
+				pieces[j][i] = player;
+				pieces[j + 1][i] = player;
+				pieces[j + 2][i] = player;
+				pieces[j + 3][i] = player;
+
+				assertTrue(board.hasWinner());
+			}
+		}
+
 		/*
-		 * Primary diagonal.
+		 * Primary diagonal wins. Winner should be recognized for all possible
+		 * combinations of four in every bottom left to top right diagonal.
 		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[3][0] = player;
-		pieces[2][1] = player;
-		pieces[1][2] = player;
-		pieces[0][3] = player;
-		assertTrue(board.hasWinner());
+		for (int i = 0; i < Board.COLS - 3; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
 
-		// TODO
+				pieces[i + 3][j] = player;
+				pieces[i + 2][j + 1] = player;
+				pieces[i + 1][j + 2] = player;
+				pieces[i][j + 3] = player;
+
+				assertTrue(board.hasWinner());
+			}
+		}
+
 		/*
-		 * Secondary diagonal.
+		 * Secondary diagonal wins. Winner should be recognized for all possible
+		 * combinations of four in every top left to bottom right diagonal.
 		 */
-		board.reset();
-		pieces = board.getPieces();
-		pieces[0][0] = player;
-		pieces[1][1] = player;
-		pieces[2][2] = player;
-		pieces[3][3] = player;
-		assertTrue(board.hasWinner());
+		for (int i = 0; i < Board.COLS - 3; i++) {
+			for (int j = 0; j < Board.ROWS - 3; j++) {
+				board.reset();
+				fillRandomly(board);
+				pieces = board.getPieces();
 
-		// TODO Test has winner when there is no winner.
+				pieces[i][j] = player;
+				pieces[i + 1][j + 1] = player;
+				pieces[i + 2][j + 2] = player;
+				pieces[i + 3][j + 3] = player;
+
+				assertTrue(board.hasWinner());
+			}
+		}
+
+		// TODO Test negative outcomes.
+		/*
+		 * Generate some random boards that cannot result in a winner. Each
+		 * player will have placed three pieces, so there cannot be a sequence
+		 * of four.
+		 */
+		for (int i = 0; i < 20; i++) {
+			board.reset();
+			fillRandomly(board, 3);
+
+			assertFalse(board.hasWinner());
+		}
 	}
 
 	/**
