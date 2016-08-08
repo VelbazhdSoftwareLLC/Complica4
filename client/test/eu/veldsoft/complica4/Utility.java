@@ -28,7 +28,7 @@ final public class Utility {
 	 *
 	 * @param boardToFill
 	 *            The board in which random pieces are put.
-	 * @return The board itself.
+	 * @return The board itself, as returned by fillRandomly().
 	 * @see Utility#fillRandomly(Board, int)
 	 */
 	public static Board fillRandomly(Board boardToFill) {
@@ -36,16 +36,12 @@ final public class Utility {
 		 * A typical game ends before each player has put 30 pieces.
 		 */
 		int piecesPerPlayer = Util.PRNG.nextInt(30);
-		fillRandomly(boardToFill, piecesPerPlayer);
-
-		return boardToFill;
+		return fillRandomly(boardToFill, piecesPerPlayer);
 	}
 
 	/**
-	 * Fill a board with a given amount of pieces. This method makes use of the
-	 * fact that Board.getPieces() returns a pointer to the original array and
-	 * not a deep copy. This method is often called by the other fillRandomly
-	 * method.
+	 * Fill a board with a given amount of pieces. This method is often called
+	 * by the other fillRandomly method.
 	 *
 	 * @param boardToFill
 	 *            The board in which random pieces are put.
@@ -56,48 +52,117 @@ final public class Utility {
 	 * @see Utility#fillRandomly(Board)
 	 */
 	public static Board fillRandomly(Board boardToFill, int piecesPerPlayer) {
-		Piece[][] pieces = boardToFill.getPieces();
 		LinkedList<Piece> players = getPlayerPieces();
 		for (int i = 0; i < piecesPerPlayer; i++) {
 			for (Piece player : players) {
-				pieces[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = player;
+				boardToFill.addTo(Util.PRNG.nextInt(Board.COLS), player);
 			}
 		}
 
 		return boardToFill;
 	}
 
-	// TODO Fill board in 1/3.
-	// additionsNumber = PRNG.nextInt(5)-2 + ROWS*COS/3;
-	// addTo()
+	/**
+	 * Put random pieces in about one third of the board. This method generates
+	 * a random number around one third of the size of the board and calls the
+	 * fillRandomly() method with it.
+	 *
+	 * @param boardToFill
+	 *            The board in which random pieces are put.
+	 * @return The board itself, as returned by fillRandomly().
+	 * @see Utility#fillRandomly(Board, int)
+	 */
+	public static Board fillOneThird(Board boardToFill) {
+		int piecesPerPlayer = Util.PRNG.nextInt(5) - 2 + Board.ROWS * Board.COLS / 3;
+		return fillRandomly(boardToFill, piecesPerPlayer);
+	}
 
-	// TODO Fill board in 2/3.
-	// additionsNumber = PRNG.nextInt(5)-2 + 2*ROWS*COS/3;
-	// addTo()
+	/**
+	 * Put random pieces in about two thirds of the board. This method generates
+	 * a random number around two thirds of the size of the board and calls the
+	 * fillRandomly() method with it.
+	 *
+	 * @param boardToFill
+	 *            The board in which random pieces are put.
+	 * @return The board itself, as returned by fillRandomly().
+	 * @see Utility#fillRandomly(Board, int)
+	 */
+	public static Board fillTwoThirds(Board boardToFill) {
+		int piecesPerPlayer = Util.PRNG.nextInt(5) - 2 + 2 * Board.ROWS * Board.COLS / 3;
+		return fillRandomly(boardToFill, piecesPerPlayer);
+	}
 
-	// TODO Fill board totally.
-	// additionsNumber = ROWS*COLS
-	// addTo()
+	/**
+	 * Put random pieces in the whole board. This method calls the
+	 * fillRandomly() method with the full size of the board.
+	 *
+	 * @param boardToFill
+	 *            The board in which random pieces are put.
+	 * @return The board itself, as returned by fillRandomly().
+	 * @see Utility#fillRandomly(Board, int)
+	 */
+	public static Board fillCompletely(Board boardToFill) {
+		int piecesPerPlayer = Board.ROWS * Board.COLS;
+		return fillRandomly(boardToFill, piecesPerPlayer);
+	}
 
-	// TODO Remove winners.
-	// while(board.hasWinners() == true) {
-	// do{
-	// randX = random;
-	// randY = random;
-	// }while(piece[randX][radnY] == EMPTY);
-	//
-	// pieces[randX][randY] = randPiece();
-	// }
+	/**
+	 * Replaces random pieces on the board while there is a winner.
+	 *
+	 * @param board
+	 *            The board to remove winners from.
+	 * @return The board itself.
+	 */
+	public static Board removeWinners(Board board) {
 
-	// TODO Generate at least one winner.
-	// while(board.hasWinners() == false) {
-	// do{
-	// randX = random;
-	// randY = random;
-	// }while(piece[randX][radnY] == EMPTY);
-	//
-	// pieces[randX][randY] = randPiece();
-	// }
+		Piece[][] pieces = board.getPieces();
+		int randX, randY;
+		while (board.hasWinner() == true) {
+			/*
+			 * Find a non-empty piece.
+			 */
+			do {
+				randX = Util.PRNG.nextInt(Board.COLS);
+				randY = Util.PRNG.nextInt(Board.ROWS);
+			} while (pieces[randX][randY] == Piece.EMPTY);
+
+			/*
+			 * Replace it with a random player's piece.
+			 */
+			pieces[randX][randY] = Piece.values()[Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS) + 1];
+		}
+
+		return board;
+	}
+
+	/**
+	 * Replaces random pieces on the board while there is no winner.
+	 *
+	 * @param board
+	 *            The board to remove winners from.
+	 * @return The board itself.
+	 */
+	public static Board generateAtLeastOneWinner(Board board) {
+
+		Piece[][] pieces = board.getPieces();
+		int randX, randY;
+		while (board.hasWinner() == false) {
+			/*
+			 * Find a non-empty piece.
+			 */
+			do {
+				randX = Util.PRNG.nextInt(Board.COLS);
+				randY = Util.PRNG.nextInt(Board.ROWS);
+			} while (pieces[randX][randY] == Piece.EMPTY);
+
+			/*
+			 * Replace it with a random player's piece.
+			 */
+			pieces[randX][randY] = Piece.values()[Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS) + 1];
+		}
+
+		return board;
+	}
 
 	/**
 	 * Create a LinkedList of all the player pieces. Then shuffle it. This
