@@ -392,7 +392,7 @@ public class BoardTest {
 		}
 
 		Piece[][] pieces = board.getPieces();
-		for (int i = 0; i < numberOfPieces; i++) {
+		for (int i = 0; i < Board.ROWS; i++) {
 			assertEquals(player, pieces[column][Board.ROWS - 1 - i]);
 		}
 	}
