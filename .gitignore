@@ -28,3 +28,4 @@ proguard/
 
 # Mac OS X
 .DS_Store
+/client/.idea
