@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import org.junit.Before;
 import org.junit.Test;
 
+import eu.veldsoft.complica4.Utility;
+
 /**
  * Tests the methods in the Example class.
  *
@@ -17,8 +19,9 @@ import org.junit.Test;
  */
 public class ExampleTest {
 
-	// TODO There are three methods in Example that are not used: setPiece(),
-	// setColumn(), setState().
+	// TODO In the Example class, setPiece, setState and setColumn are private.
+	// They cannot be tested and the constructors are used when testing their
+	// getters.
 
 	private static final Piece DEFAULT_PIECE = Piece.PLAYER1;
 	private static final int DEFAULT_PIECE_ID = DEFAULT_PIECE.getId();
@@ -37,48 +40,12 @@ public class ExampleTest {
 		example = new Example(DEFAULT_STATE, DEFAULT_PIECE_ID, DEFAULT_COLUMN, DEFAULT_RANK);
 	}
 
-	// TODO remove this test
-	/**
-	 * Tests to see if the common constructor assigns the correct values to the
-	 * fields.
-	 */
-	@Test
-	public void testExampleIntIntInt() {
-
-		/*
-		 * Generate some random values for the constructor. Games rarely last
-		 * longer than 100 turns.
-		 */
-		int column = Util.PRNG.nextInt(Board.COLS);
-		int rank = Util.PRNG.nextInt(100);
-		Piece piece = getPlayerPieces().get(0);
-
-		/*
-		 * The constructor that needs to be tested has private access, so
-		 * instead the two constructors that use it are called here. The
-		 * differences they have can be neglected because their states are
-		 * empty.
-		 */
-		Example example1 = new Example(new int[][] { {} }, piece.getId(), column, rank);
-		Example example2 = new Example(new Piece[][] { {} }, piece, column, rank);
-
-		assertEquals(piece.getId(), example1.getPiece());
-		assertEquals(column, example1.getColunm());
-		assertEquals(rank, example1.getRank());
-
-		assertEquals(piece.getId(), example2.getPiece());
-		assertEquals(column, example2.getColunm());
-		assertEquals(rank, example2.getRank());
-
-	}
-
 	/**
 	 * Tests to see if the constructor with the state-as-integers assigns the
 	 * correct values to the fields.
 	 */
 	@Test
 	public void testExampleIntArrayArrayIntIntInt() {
-
 		int[][] state = new int[Board.COLS][Board.ROWS];
 
 		/*
@@ -104,7 +71,6 @@ public class ExampleTest {
 		assertEquals(rank, example.getRank());
 
 		int[][] exampleState = example.getState();
-
 		for (int i = 0; i < exampleState.length; i++) {
 			for (int j = 0; j < exampleState[i].length; j++) {
 				assertEquals(state[i][j], exampleState[i][j]);
@@ -119,16 +85,18 @@ public class ExampleTest {
 	 */
 	@Test
 	public void testExamplePieceArrayArrayPieceIntInt() {
-		Piece[][] state = new Piece[Board.COLS][Board.ROWS];
-
-		LinkedList<Piece> players = getPlayerPieces();
 		/*
-		 * Put a random amount of pieces on the board.
+		 * Create a randomly filled board to use its state in the constructors.
 		 */
-		int amount = Util.PRNG.nextInt(100);
-		for (int i = 0; i < amount; i++) {
-			state[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = players
-					.get(Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS));
+		Board board = new Board();
+		board.reset();
+		Utility.fillRandomly(board);
+		int[][] boardState = board.getState();
+		Piece[][] state = new Piece[Board.COLS][Board.ROWS];
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS; j++) {
+				state[i][j] = Piece.values()[boardState[i][j]];
+			}
 		}
 
 		/*
@@ -146,7 +114,6 @@ public class ExampleTest {
 		assertEquals(rank, example.getRank());
 
 		int[][] exampleState = example.getState();
-
 		for (int i = 0; i < exampleState.length; i++) {
 			for (int j = 0; j < exampleState[i].length; j++) {
 				assertEquals(state[i][j].getId(), exampleState[i][j]);
@@ -154,9 +121,41 @@ public class ExampleTest {
 		}
 	}
 
+	/**
+	 * Tests to see if the piece is returned correctly.
+	 */
 	@Test
 	public void testGetPiece() {
-		fail("Not yet implemented");
+		/*
+		 * The example object should be set to default values.
+		 */
+		assertEquals(DEFAULT_PIECE_ID, example.getPiece());
+
+		/*
+		 * Create a randomly filled board to use its state in the constructors.
+		 */
+		Board board = new Board();
+		board.reset();
+		Utility.fillRandomly(board);
+		int[][] boardState = board.getState();
+		Piece[][] state = new Piece[Board.COLS][Board.ROWS];
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS; j++) {
+				state[i][j] = Piece.values()[boardState[i][j]];
+			}
+		}
+
+		/*
+		 * Test with all different pieces with both constructors.
+		 */
+		LinkedList<Piece> pieces = Utility.getPlayerPieces();
+		for (Piece piece : pieces) {
+			example = new Example(DEFAULT_STATE, piece.getId(), DEFAULT_COLUMN, DEFAULT_RANK);
+			assertEquals(piece.getId(), example.getPiece());
+
+			example = new Example(state, piece, DEFAULT_COLUMN, DEFAULT_RANK);
+			assertEquals(piece.getId(), example.getPiece());
+		}
 	}
 
 	@Test
@@ -164,9 +163,50 @@ public class ExampleTest {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Tests to see if the state is returned correctly.
+	 */
 	@Test
 	public void testGetState() {
-		fail("Not yet implemented");
+		/*
+		 * Test the getState method with both constructors.
+		 */
+
+		int[][] stateAsInts = new int[Board.COLS][Board.ROWS];
+
+		/*
+		 * Put a random amount of pieces on the board.
+		 */
+		int amount = Util.PRNG.nextInt(100);
+		for (int i = 0; i < amount; i++) {
+			stateAsInts[Util.PRNG.nextInt(Board.COLS)][Util.PRNG.nextInt(Board.ROWS)] = Util.PRNG.nextInt(Piece.maxId())
+					+ 1;
+		}
+
+		example = new Example(stateAsInts, DEFAULT_PIECE_ID, DEFAULT_COLUMN, DEFAULT_RANK);
+
+		int[][] exampleState = example.getState();
+		for (int i = 0; i < exampleState.length; i++) {
+			for (int j = 0; j < exampleState[i].length; j++) {
+				assertEquals(stateAsInts[i][j], exampleState[i][j]);
+			}
+		}
+
+		Piece[][] stateAsPieces = new Piece[Board.COLS][Board.ROWS];
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS; j++) {
+				stateAsPieces[i][j] = Piece.values()[stateAsInts[i][j]];
+			}
+		}
+
+		example = new Example(stateAsPieces, DEFAULT_PIECE, DEFAULT_COLUMN, DEFAULT_RANK);
+
+		exampleState = example.getState();
+		for (int i = 0; i < exampleState.length; i++) {
+			for (int j = 0; j < exampleState[i].length; j++) {
+				assertEquals(stateAsInts[i][j], exampleState[i][j]);
+			}
+		}
 	}
 
 	@Test
@@ -174,9 +214,40 @@ public class ExampleTest {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Tests to see if the column is returned correctly.
+	 */
 	@Test
 	public void testGetColumn() {
-		fail("Not yet implemented");
+		/*
+		 * The example object should be set to default values.
+		 */
+		assertEquals(DEFAULT_COLUMN, example.getColunm());
+
+		/*
+		 * Create a randomly filled board to use its state in the constructors.
+		 */
+		Board board = new Board();
+		board.reset();
+		Utility.fillRandomly(board);
+		int[][] boardState = board.getState();
+		Piece[][] state = new Piece[Board.COLS][Board.ROWS];
+		for (int i = 0; i < Board.COLS; i++) {
+			for (int j = 0; j < Board.ROWS; j++) {
+				state[i][j] = Piece.values()[boardState[i][j]];
+			}
+		}
+
+		/*
+		 * Test with all different columns with both constructors.
+		 */
+		for (int column = 0; column < Board.COLS; column++) {
+			example = new Example(DEFAULT_STATE, DEFAULT_PIECE_ID, column, DEFAULT_RANK);
+			assertEquals(column, example.getColunm());
+
+			example = new Example(state, DEFAULT_PIECE, column, DEFAULT_RANK);
+			assertEquals(column, example.getColunm());
+		}
 	}
 
 	@Test
@@ -184,14 +255,43 @@ public class ExampleTest {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Tests to see if the rank is returned correctly.
+	 */
 	@Test
 	public void testGetRank() {
-		fail("Not yet implemented");
+		/*
+		 * The example object should be set to default values.
+		 */
+		assertEquals(DEFAULT_RANK, example.getRank());
+
+		int rank;
+		/*
+		 * Run the test ten times with different values. A typical game does not
+		 * last longer than 100 moves.
+		 */
+		for (int i = 0; i < 10; i++) {
+			rank = Util.PRNG.nextInt(100);
+			example.setRank(rank);
+			assertEquals(rank, example.getRank());
+		}
 	}
 
+	/**
+	 * Test to see if the rank is assigned correctly.
+	 */
 	@Test
 	public void testSetRank() {
-		fail("Not yet implemented");
+		int rank;
+		/*
+		 * Run the test ten times with different values. A typical game does not
+		 * last longer than 100 moves.
+		 */
+		for (int i = 0; i < 10; i++) {
+			rank = Util.PRNG.nextInt(100);
+			example.setRank(rank);
+			assertEquals(rank, example.getRank());
+		}
 	}
 
 }

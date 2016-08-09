@@ -5,13 +5,14 @@ import static eu.veldsoft.complica4.Utility.getPlayerPieces;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import eu.veldsoft.complica4.Utility;
 
 /**
  * Tests the methods in the Board class.
@@ -20,6 +21,7 @@ import org.junit.Test;
  * @see Board
  */
 public class BoardTest {
+	// TODO Check for is game over flag conditions.
 
 	/**
 	 * Board object used in all test methods and the setUp method.
@@ -152,19 +154,21 @@ public class BoardTest {
 			}
 		}
 
-		// TODO Test negative outcomes.
 		/*
-		 * Generate some random boards that cannot result in ending the game.
-		 * Each player will have placed three pieces, so there cannot be a
-		 * sequence of four.
+		 * Game should not be over when there are no winners.
 		 */
-		for (int i = 0; i < 20; i++) {
-			board.reset();
-			fillRandomly(board, 3);
-
-			board.hasWinner();
-			assertFalse(board.isGameOver());
-		}
+		// TODO The gameOver variable in the Board class is set to true in the
+		// hasWinner() method.
+		// That method is used when removing winners in Utility, and the
+		// variable is never set to false again.
+		// Maybe have that method set gameOver to false if it doesn't find
+		// anything?
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillOneThird(board)).isGameOver());
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillTwoThirds(board)).isGameOver());
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillCompletely(board)).isGameOver());
 	}
 
 	/**
@@ -288,38 +292,28 @@ public class BoardTest {
 	 */
 	@Test
 	public void testGetWinnerSession() {
-		/*
-		 * Put combination for two simultaneous winners. First winner is Player
-		 * 1. Second winner is player 4. The win combination appears after first
-		 * four moves.
-		 */
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
+		Utility.generateAtLeastOneWinner(Utility.fillOneThird(board)).hasWinner();
+		List<Example> gameSession = board.getSession();
+		List<Example> winnerSession = board.getWinnerSession();
+		// TODO Account for multiple winners.
+		int numberOfWinners = 1;
+		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
 
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER3);
+		board.reset();
+		Utility.generateAtLeastOneWinner(Utility.fillTwoThirds(board)).hasWinner();
+		gameSession = board.getSession();
+		winnerSession = board.getWinnerSession();
+		// TODO Account for multiple winners.
+		numberOfWinners = 1;
+		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
 
-		board.addTo(0, Piece.PLAYER3);
-		board.addTo(1, Piece.PLAYER4);
-		board.addTo(2, Piece.PLAYER1);
-		board.addTo(3, Piece.PLAYER2);
-
-		board.addTo(0, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER1);
-
-		board.hasWinner();
-		List<Example> session = board.getWinnerSession();
-
-		// TODO Use random board states.
-		for (Example e : session) {
-			System.out.println(e.getPiece());
-		}
-
-		fail("Not fully implemented!");
+		board.reset();
+		Utility.generateAtLeastOneWinner(Utility.fillCompletely(board)).hasWinner();
+		gameSession = board.getSession();
+		winnerSession = board.getWinnerSession();
+		// TODO Account for multiple winners.
+		numberOfWinners = 1;
+		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
 	}
 
 	/**
@@ -399,7 +393,7 @@ public class BoardTest {
 		}
 
 		Piece[][] pieces = board.getPieces();
-		for (int i = 0; i < numberOfPieces; i++) {
+		for (int i = 0; i < Board.ROWS; i++) {
 			assertEquals(player, pieces[column][Board.ROWS - 1 - i]);
 		}
 	}
@@ -497,18 +491,15 @@ public class BoardTest {
 			}
 		}
 
-		// TODO Test negative outcomes. Once with every type of filling.
 		/*
-		 * Generate some random boards that cannot result in a winner. Each
-		 * player will have placed three pieces, so there cannot be a sequence
-		 * of four.
+		 * There should be no winners after removal.
 		 */
-		for (int i = 0; i < 20; i++) {
-			board.reset();
-			fillRandomly(board, 3);
-
-			assertFalse(board.hasWinner());
-		}
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillOneThird(board)).hasWinner());
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillTwoThirds(board)).hasWinner());
+		board.reset();
+		assertFalse(Utility.removeWinners(Utility.fillCompletely(board)).hasWinner());
 	}
 
 	/**
@@ -516,93 +507,27 @@ public class BoardTest {
 	 */
 	@Test
 	public void testWinners() {
-		// TODO Use randomly generated board.
-
-		board.addTo(0, Piece.PLAYER1);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER3);
-		board.addTo(3, Piece.PLAYER4);
-
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER1);
-		board.addTo(2, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER3);
-
-		board.addTo(0, Piece.PLAYER3);
-		board.addTo(1, Piece.PLAYER4);
-		board.addTo(2, Piece.PLAYER1);
-		board.addTo(3, Piece.PLAYER2);
-
-		board.addTo(0, Piece.PLAYER4);
-		board.addTo(3, Piece.PLAYER1);
-
-		int[][] winners = board.winners();
+		int[][] winners = Utility.generateAtLeastOneWinner(Utility.fillRandomly(board)).winners();
+		int minWinningPieces = Board.WIN_LINE_LENGTH;
+		int maxWinningPieces = Board.COLS * Board.NUMBER_OF_PLAYERS;
 
 		/*
-		 * Player one wins with a diagonal from bottom left to top right.
+		 * Count the amount of 1s in the 2-D array.
 		 */
-		assertEquals(1, winners[0][Board.ROWS - 1]);
-		assertEquals(1, winners[1][Board.ROWS - 2]);
-		assertEquals(1, winners[2][Board.ROWS - 3]);
-		assertEquals(1, winners[3][Board.ROWS - 4]);
+		int winningCount = 0;
+		for (int[] row : winners) {
+			for (int piece : row) {
+				if (piece == 1) {
+					winningCount++;
+				}
+			}
+		}
 
 		/*
-		 * Player four wins with a diagonal from bottom right to top left.
+		 * The count should be between the minimum and the maximum possible
+		 * amounts of winning pieces.
 		 */
-		assertEquals(1, winners[3][Board.ROWS - 1]);
-		assertEquals(1, winners[2][Board.ROWS - 2]);
-		assertEquals(1, winners[1][Board.ROWS - 3]);
-		assertEquals(1, winners[0][Board.ROWS - 4]);
-
-		// for (int j = 0; j < Board.ROWS; j++) {
-		// for (int i = 0; i < Board.COLS; i++) {
-		// System.out.print(winners[i][j] + "\t");
-		// }
-		// System.out.println();
-		// }
-		// System.out.println();
-		// for (int j = 0; j < Board.ROWS; j++) {
-		// for (int i = 0; i < Board.COLS; i++) {
-		// System.out.print(board.getPieces()[i][j] + "\t");
-		// }
-		// System.out.println();
-		// }
-
-		board.reset();
-
-		board.addTo(0, Piece.PLAYER2);
-		board.addTo(1, Piece.PLAYER2);
-		board.addTo(2, Piece.PLAYER2);
-		board.addTo(3, Piece.PLAYER2);
-
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
-		board.addTo(4, Piece.PLAYER3);
-
-		winners = board.winners();
-
-		/*
-		 * Player three wins with a column.
-		 */
-		assertEquals(1, winners[4][Board.ROWS - 1]);
-		assertEquals(1, winners[4][Board.ROWS - 2]);
-		assertEquals(1, winners[4][Board.ROWS - 3]);
-		assertEquals(1, winners[4][Board.ROWS - 4]);
-
-		/*
-		 * Player two wins with a row.
-		 */
-		assertEquals(1, winners[0][Board.ROWS - 1]);
-		assertEquals(1, winners[1][Board.ROWS - 1]);
-		assertEquals(1, winners[2][Board.ROWS - 1]);
-		assertEquals(1, winners[3][Board.ROWS - 1]);
-
-		// for (int j = 0; j < Board.ROWS; j++) {
-		// for (int i = 0; i < Board.COLS; i++) {
-		// System.out.print(winners[i][j] + " ");
-		// }
-		// System.out.println();
-		// }
+		assertTrue(minWinningPieces <= winningCount);
+		assertTrue(winningCount <= maxWinningPieces);
 	}
 }

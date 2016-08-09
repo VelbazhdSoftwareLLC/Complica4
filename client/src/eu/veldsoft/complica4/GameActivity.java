@@ -191,6 +191,8 @@ public class GameActivity extends Activity {
 		}
 
 		if (board.isGameOver() == true || board.hasWinner() == true) {
+			board.setGameOver();
+
 			/*
 			 * Store winner session in SQLite database.
 			 */

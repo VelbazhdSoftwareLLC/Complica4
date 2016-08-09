@@ -39,10 +39,20 @@ public class UtilTest {
 		int inputSize = 3, hiddenSize = 2, outputSize = 3;
 		BasicNetwork net = Util.newNetwork(inputSize, hiddenSize, outputSize);
 
-		assertEquals(inputSize, net.getInputCount());// 0th layer (input)
-		assertEquals(hiddenSize, net.getLayerNeuronCount(1));// 1st layer
-																// (hidden)
-		assertEquals(outputSize, net.getOutputCount());// 2nd layer (output)
+		/*
+		 * 0th layer (input)
+		 */
+		assertEquals(inputSize, net.getInputCount());
+
+		/*
+		 * 1st layer (hidden)
+		 */
+		assertEquals(hiddenSize, net.getLayerNeuronCount(1));
+
+		/*
+		 * 2nd layer (output)
+		 */
+		assertEquals(outputSize, net.getOutputCount());
 	}
 
 	@Test
