@@ -1,14 +1,15 @@
 package eu.veldsoft.complica4.model;
 
-import eu.veldsoft.complica4.Utility;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.LinkedList;
-
 import static eu.veldsoft.complica4.Utility.getPlayerPieces;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import java.util.LinkedList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import eu.veldsoft.complica4.Utility;
 
 /**
  * Tests the methods in the Example class.

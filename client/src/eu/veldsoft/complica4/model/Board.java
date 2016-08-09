@@ -233,6 +233,16 @@ public class Board {
 	}
 
 	/**
+	 * Game over setter.
+	 * 
+	 * @param gameOver
+	 *            True for game over flag.
+	 */
+	public void setGameOver() {
+		this.gameOver = false;
+	}
+
+	/**
 	 * Pieces on the board getter. Should be implemented as deep copy.
 	 * 
 	 * @return Two dimensional array with the pieces on the board.
@@ -391,19 +401,15 @@ public class Board {
 				}
 
 				if (hasHorizontalLine(i, j) == true) {
-					gameOver = true;
 					return true;
 				}
 				if (hasVerticalLine(i, j) == true) {
-					gameOver = true;
 					return true;
 				}
 				if (hasFirstDiagonalLine(i, j) == true) {
-					gameOver = true;
 					return true;
 				}
 				if (hasSecondDiagonalLine(i, j) == true) {
-					gameOver = true;
 					return true;
 				}
 			}

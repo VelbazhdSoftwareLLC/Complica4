@@ -114,22 +114,21 @@ final public class Utility {
 	 * @return The board itself.
 	 */
 	public static Board removeWinners(Board board) {
-
 		Piece[][] pieces = board.getPieces();
-		int randX, randY;
+		int x, y;
 		while (board.hasWinner() == true) {
 			/*
 			 * Find a non-empty piece.
 			 */
 			do {
-				randX = Util.PRNG.nextInt(Board.COLS);
-				randY = Util.PRNG.nextInt(Board.ROWS);
-			} while (pieces[randX][randY] == Piece.EMPTY);
+				x = Util.PRNG.nextInt(Board.COLS);
+				y = Util.PRNG.nextInt(Board.ROWS);
+			} while (pieces[x][y] == Piece.EMPTY);
 
 			/*
 			 * Replace it with a random player's piece.
 			 */
-			pieces[randX][randY] = Piece.values()[Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS) + 1];
+			pieces[x][y] = Piece.values()[Util.PRNG.nextInt(Board.NUMBER_OF_PLAYERS) + 1];
 		}
 
 		return board;
@@ -163,6 +162,8 @@ final public class Utility {
 
 		return board;
 	}
+
+	// TODO generateExactlyOneWinner()
 
 	/**
 	 * Create a LinkedList of all the player pieces. Then shuffle it. This

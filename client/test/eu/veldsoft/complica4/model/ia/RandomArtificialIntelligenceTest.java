@@ -10,6 +10,8 @@ import org.junit.Test;
 
 public class RandomArtificialIntelligenceTest {
 
+	// TODO Research how testing randomness is done in JUnit.
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}

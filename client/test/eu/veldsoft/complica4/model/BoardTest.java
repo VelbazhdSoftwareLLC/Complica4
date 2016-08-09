@@ -5,14 +5,14 @@ import static eu.veldsoft.complica4.Utility.getPlayerPieces;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import eu.veldsoft.complica4.Utility;
 import org.junit.Before;
 import org.junit.Test;
+
+import eu.veldsoft.complica4.Utility;
 
 /**
  * Tests the methods in the Board class.
@@ -21,6 +21,7 @@ import org.junit.Test;
  * @see Board
  */
 public class BoardTest {
+	// TODO Check for is game over flag conditions.
 
 	/**
 	 * Board object used in all test methods and the setUp method.

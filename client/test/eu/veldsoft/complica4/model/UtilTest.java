@@ -49,7 +49,7 @@ public class UtilTest {
 		 */
 		assertEquals(hiddenSize, net.getLayerNeuronCount(1));
 
-		/* 
+		/*
 		 * 2nd layer (output)
 		 */
 		assertEquals(outputSize, net.getOutputCount());
