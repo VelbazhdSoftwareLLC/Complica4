@@ -138,7 +138,7 @@ final public class Utility {
 	 * Replaces random pieces on the board while there is no winner.
 	 *
 	 * @param board
-	 *            The board to remove winners from.
+	 *            The board to generate winners in.
 	 * @return The board itself.
 	 */
 	public static Board generateAtLeastOneWinner(Board board) {
@@ -163,7 +163,24 @@ final public class Utility {
 		return board;
 	}
 
-	// TODO generateExactlyOneWinner()
+	/**
+	 * Generates exactly one winner in a given board. First removes any current
+	 * winners and then replaces pieces until there is a winner.
+	 *
+	 * @param board
+	 *            The board to generate one winner in.
+	 * @return The board itself.
+	 *
+	 * @see Utility#removeWinners(Board)
+	 * @see Utility#generateAtLeastOneWinner(Board)
+	 */
+	public static Board generateExactlyOneWinner(Board board) {
+		/*
+		 * If there are no winners on the board, changing one piece at a time
+		 * will result in exactly one winner.
+		 */
+		return generateAtLeastOneWinner(removeWinners(board));
+	}
 
 	/**
 	 * Create a LinkedList of all the player pieces. Then shuffle it. This
