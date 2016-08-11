@@ -27,7 +27,8 @@ public class AbstractArtificialIntelligenceTest {
 		AbstractArtificialIntelligence aai = new AbstractArtificialIntelligence() {
 		};
 
-		// TODO Show how I test the throw clause.
+		// TODO Show how I test the throw clause. Check how its done in
+		// stackoverflow and github.
 		/*
 		 * The throw clauses are tested by calling the move method with
 		 * incorrect values and if no exception is thrown, the fail method is

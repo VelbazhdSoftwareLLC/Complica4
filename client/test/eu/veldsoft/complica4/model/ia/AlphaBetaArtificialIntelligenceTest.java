@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+//TODO Describe, nothing to test yet.
 public class AlphaBetaArtificialIntelligenceTest {
 
 	@BeforeClass

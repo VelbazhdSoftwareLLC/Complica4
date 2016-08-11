@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-//TODO no methods to test.
+//TODO no methods to test. Just describe it.
 public class NoValidMoveExceptionTest {
 
 	@BeforeClass

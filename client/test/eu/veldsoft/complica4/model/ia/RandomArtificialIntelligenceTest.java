@@ -2,6 +2,9 @@ package eu.veldsoft.complica4.model.ia;
 
 import static org.junit.Assert.fail;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 import org.junit.Test;
 
 import eu.veldsoft.complica4.model.Util;
@@ -22,45 +25,78 @@ public class RandomArtificialIntelligenceTest {
 	 */
 	@Test
 	public void testMove() {
+		/*
+		 * 
+		 */
+		final int OBSERVATION_LENGTH = 4;
+
+		/*
+		 * 
+		 */
+		final int STATISTICAL_SIGNIFICANCE = 100 - OBSERVATION_LENGTH;
+
 		int[][] state = new int[ArtificialIntelligence.STATE_COLS][ArtificialIntelligence.STATE_ROWS];
 		int player = Util.PRNG.nextInt(ArtificialIntelligence.NUMBER_OF_PLAYERS + 1);
 
 		/*
 		 * Keep track of the last four values. They should not all be the same.
 		 */
-		int[] lastFourValues = new int[4];
-		int lastIndex = lastFourValues.length - 1;
+		Deque<Integer> values = new LinkedList<Integer>();
 
 		/*
 		 * Call the move method a hundred times to have a working set of values.
 		 */
-		RandomArtificialIntelligence randomAI = new RandomArtificialIntelligence();
-		for (int i = 0; i < 100; i++) {
-			int returnedValue = randomAI.move(state, player);
+		ArtificialIntelligence ai = new RandomArtificialIntelligence();
+
+		/*
+		 * Saves the initial values.
+		 */
+		for (int i = 0; i < OBSERVATION_LENGTH; i++) {
+			values.addLast(ai.move(state, player));
+		}
+
+		/*
+		 * Shift other values.
+		 */
+		for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
+			/*
+			 * Drop first.
+			 */
+			Integer dropped = values.removeFirst();
 
 			/*
-			 * Saves the first four values.
+			 * Count duplications.
 			 */
-			if (i < 4) {
-				lastFourValues[i] = returnedValue;
-			} else {
-				/*
-				 * If all values are the same as the first value, fail the test.
-				 */
-				int firstValue = lastFourValues[0];
-				int counter = 1;
-				for (int j = 0; j < lastIndex; j++) {
-					lastFourValues[j] = lastFourValues[j + 1];
-					if (lastFourValues[j] == firstValue) {
-						counter++;
-					}
+			int counter = 1;
+			for (Integer value : values) {
+				if (dropped == value) {
+					counter++;
 				}
-				if (counter == lastFourValues.length) {
-					fail("Last four values returned by the number generator are all the same!");
-				}
-				lastFourValues[lastIndex] = returnedValue;
+			}
+
+			/*
+			 * Add new.
+			 */
+			values.addLast(ai.move(state, player));
+
+			/*
+			 * If all values are the same as the first value, fail the test.
+			 */
+			if (counter == OBSERVATION_LENGTH) {
+				fail("Last four values returned by the number generator are all the same!");
 			}
 		}
+
+		// long histogram[] = new long[Board.COLS];
+		// Arrays.fill(histogram, 0L);
+		// for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
+		// histogram[ai.move(state, player)]++;
+		// }
+
+		// TODO 1. Mean value.
+		// TODO 2. Standard deviation.
+		// TODO 3. Fail if mean and standard deviation are unusual. Compare in
+		// epsilon delta.
 	}
 
 }
