@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
- * 
+ * Tests the methods in the custom exception class - InvalidMoveException.
  * 
  * @author Georgi Gospodinov
  */

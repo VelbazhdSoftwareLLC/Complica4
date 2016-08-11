@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+//TODO ArtificialIntelligence.java is an interface with no implemented methods.
+//There is nothing to test.
 public class ArtificialIntelligenceTest {
 
 	@BeforeClass
