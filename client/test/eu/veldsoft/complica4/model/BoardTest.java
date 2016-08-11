@@ -21,7 +21,6 @@ import eu.veldsoft.complica4.Utility;
  * @see Board
  */
 public class BoardTest {
-	// TODO Check for is game over flag conditions.
 
 	/**
 	 * Board object used in all test methods and the setUp method.
@@ -56,7 +55,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test to see if the program recognizes the end of the game.
+	 * Test to see if the game over flag is returned correctly.
 	 */
 	@Test
 	public void testIsGameOver() {
@@ -66,109 +65,28 @@ public class BoardTest {
 		assertFalse(board.isGameOver());
 
 		/*
-		 * Select random player.
+		 * Game is over after being set to true.
 		 */
-		Piece player = getPlayerPieces().get(0);
-		Piece[][] pieces;
+		board.setGameOver();
+		assertTrue(board.isGameOver());
 
 		/*
-		 * Vertical wins. Game over should be recognized for all possible
-		 * combinations of four in every column.
+		 * Game is not over after reset.
 		 */
-		for (int i = 0; i < Board.COLS; i++) {
-			for (int j = 0; j < Board.ROWS - 3; j++) {
-				board.reset();
-				fillRandomly(board);
-				pieces = board.getPieces();
-
-				pieces[i][j] = player;
-				pieces[i][j + 1] = player;
-				pieces[i][j + 2] = player;
-				pieces[i][j + 3] = player;
-
-				board.hasWinner();
-				assertTrue(board.isGameOver());
-			}
-		}
-
-		/*
-		 * Horizontal wins. Game over should be recognized for all possible
-		 * combinations of four in every row.
-		 */
-		for (int i = 0; i < Board.ROWS; i++) {
-
-			for (int j = 0; j < Board.COLS - 3; j++) {
-				board.reset();
-				fillRandomly(board);
-				pieces = board.getPieces();
-
-				pieces[j][i] = player;
-				pieces[j + 1][i] = player;
-				pieces[j + 2][i] = player;
-				pieces[j + 3][i] = player;
-
-				board.hasWinner();
-				assertTrue(board.isGameOver());
-			}
-		}
-
-		/*
-		 * Primary diagonal wins. Game over should be recognized for all
-		 * possible combinations of four in every bottom left to top right
-		 * diagonal.
-		 */
-		for (int i = 0; i < Board.COLS - 3; i++) {
-			for (int j = 0; j < Board.ROWS - 3; j++) {
-				board.reset();
-				fillRandomly(board);
-				pieces = board.getPieces();
-
-				pieces[i + 3][j] = player;
-				pieces[i + 2][j + 1] = player;
-				pieces[i + 1][j + 2] = player;
-				pieces[i][j + 3] = player;
-
-				board.hasWinner();
-				assertTrue(board.isGameOver());
-			}
-		}
-
-		/*
-		 * Secondary diagonal wins. Game over should be recognized for all
-		 * possible combinations of four in every top left to bottom right
-		 * diagonal.
-		 */
-		for (int i = 0; i < Board.COLS - 3; i++) {
-			for (int j = 0; j < Board.ROWS - 3; j++) {
-				board.reset();
-				fillRandomly(board);
-				pieces = board.getPieces();
-
-				pieces[i][j] = player;
-				pieces[i + 1][j + 1] = player;
-				pieces[i + 2][j + 2] = player;
-				pieces[i + 3][j + 3] = player;
-
-				board.hasWinner();
-				assertTrue(board.isGameOver());
-			}
-		}
-
-		/*
-		 * Game should not be over when there are no winners.
-		 */
-		// TODO The gameOver variable in the Board class is set to true in the
-		// hasWinner() method.
-		// That method is used when removing winners in Utility, and the
-		// variable is never set to false again.
-		// Maybe have that method set gameOver to false if it doesn't find
-		// anything?
 		board.reset();
-		assertFalse(Utility.removeWinners(Utility.fillOneThird(board)).isGameOver());
-		board.reset();
-		assertFalse(Utility.removeWinners(Utility.fillTwoThirds(board)).isGameOver());
-		board.reset();
-		assertFalse(Utility.removeWinners(Utility.fillCompletely(board)).isGameOver());
+		assertFalse(board.isGameOver());
+	}
+
+	/**
+	 * Test to see if the game over setter assigns the correct value.
+	 */
+	@Test
+	public void testSetGameOver() {
+		/*
+		 * Game is over after being set to true.
+		 */
+		board.setGameOver();
+		assertTrue(board.isGameOver());
 	}
 
 	/**
@@ -292,28 +210,29 @@ public class BoardTest {
 	 */
 	@Test
 	public void testGetWinnerSession() {
-		Utility.generateAtLeastOneWinner(Utility.fillOneThird(board)).hasWinner();
+		/*
+		 * Work with exactly one winner because if the number of winners is not
+		 * known the tests will be inappropriate.
+		 */
+		Utility.generateExactlyOneWinner(Utility.fillOneThird(board)).hasWinner();
+		board.setGameOver();
 		List<Example> gameSession = board.getSession();
 		List<Example> winnerSession = board.getWinnerSession();
-		// TODO Account for multiple winners.
-		int numberOfWinners = 1;
-		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
+		assertEquals(gameSession.size() / 4, winnerSession.size());
 
 		board.reset();
-		Utility.generateAtLeastOneWinner(Utility.fillTwoThirds(board)).hasWinner();
+		Utility.generateExactlyOneWinner(Utility.fillTwoThirds(board)).hasWinner();
+		board.setGameOver();
 		gameSession = board.getSession();
 		winnerSession = board.getWinnerSession();
-		// TODO Account for multiple winners.
-		numberOfWinners = 1;
-		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
+		assertEquals(gameSession.size() / 4, winnerSession.size());
 
 		board.reset();
-		Utility.generateAtLeastOneWinner(Utility.fillCompletely(board)).hasWinner();
+		Utility.generateExactlyOneWinner(Utility.fillCompletely(board)).hasWinner();
+		board.setGameOver();
 		gameSession = board.getSession();
 		winnerSession = board.getWinnerSession();
-		// TODO Account for multiple winners.
-		numberOfWinners = 1;
-		assertEquals(numberOfWinners * gameSession.size() / 4, winnerSession.size());
+		assertEquals(gameSession.size() / 4, winnerSession.size());
 	}
 
 	/**
@@ -393,7 +312,7 @@ public class BoardTest {
 		}
 
 		Piece[][] pieces = board.getPieces();
-		for (int i = 0; i < Board.ROWS; i++) {
+		for (int i = 0; i < Board.ROWS && i < numberOfPieces; i++) {
 			assertEquals(player, pieces[column][Board.ROWS - 1 - i]);
 		}
 	}

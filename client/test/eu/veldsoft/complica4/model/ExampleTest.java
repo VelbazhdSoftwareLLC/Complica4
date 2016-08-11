@@ -19,10 +19,6 @@ import eu.veldsoft.complica4.Utility;
  */
 public class ExampleTest {
 
-	// TODO In the Example class, setPiece, setState and setColumn are private.
-	// They cannot be tested and the constructors are used when testing their
-	// getters.
-
 	private static final Piece DEFAULT_PIECE = Piece.PLAYER1;
 	private static final int DEFAULT_PIECE_ID = DEFAULT_PIECE.getId();
 	private static final int DEFAULT_COLUMN = 1;
@@ -158,11 +154,6 @@ public class ExampleTest {
 		}
 	}
 
-	@Test
-	public void testSetPiece() {
-		fail("Not yet implemented");
-	}
-
 	/**
 	 * Tests to see if the state is returned correctly.
 	 */
@@ -209,11 +200,6 @@ public class ExampleTest {
 		}
 	}
 
-	@Test
-	public void testSetState() {
-		fail("Not yet implemented");
-	}
-
 	/**
 	 * Tests to see if the column is returned correctly.
 	 */
@@ -248,11 +234,6 @@ public class ExampleTest {
 			example = new Example(state, DEFAULT_PIECE, column, DEFAULT_RANK);
 			assertEquals(column, example.getColunm());
 		}
-	}
-
-	@Test
-	public void testSetColumn() {
-		fail("Not yet implemented");
 	}
 
 	/**

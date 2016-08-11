@@ -233,13 +233,11 @@ public class Board {
 	}
 
 	/**
-	 * Game over setter.
-	 * 
-	 * @param gameOver
-	 *            True for game over flag.
+	 * Game over setter. Sets the flag to true. There should be no way to set it
+	 * to false without a game reset.
 	 */
 	public void setGameOver() {
-		this.gameOver = false;
+		this.gameOver = true;
 	}
 
 	/**
