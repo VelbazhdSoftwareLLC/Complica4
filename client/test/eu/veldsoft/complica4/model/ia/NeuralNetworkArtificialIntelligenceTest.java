@@ -8,6 +8,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Tests the methods in the NeuralNetworkArtificialIntelligence class.
+ * 
+ * @author Georgi Gospodinov
+ * @see NeuralNetworkArtificialIntelligence
+ */
 public class NeuralNetworkArtificialIntelligenceTest {
 
 	@BeforeClass
@@ -26,11 +32,17 @@ public class NeuralNetworkArtificialIntelligenceTest {
 	public void tearDown() throws Exception {
 	}
 
+	/**
+	 * Tests the move method of the the neural network.
+	 */
 	@Test
 	public void testMove() {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Tests the constructor of the neural network.
+	 */
 	@Test
 	public void testNeuralNetworkArtificialIntelligence() {
 		fail("Not yet implemented");

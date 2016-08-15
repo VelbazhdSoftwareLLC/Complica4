@@ -1,12 +1,12 @@
 package eu.veldsoft.complica4.model.ia;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.Arrays;
 
 import org.junit.Test;
 
+import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Util;
 
 /**
@@ -17,86 +17,60 @@ import eu.veldsoft.complica4.model.Util;
  */
 public class RandomArtificialIntelligenceTest {
 
-	// TODO Is this random testing fine, or should a more complicated algorithm
-	// be implemented?
-
 	/**
-	 * Tests the randomness of the move method.
+	 * Tests the randomness of the move method. Uses a histogram with a
+	 * pre-calculated range of possible values for the mean and standard
+	 * deviation.
 	 */
 	@Test
 	public void testMove() {
-		/*
-		 * 
-		 */
-		final int OBSERVATION_LENGTH = 4;
 
 		/*
-		 * 
+		 * The size of the working set of values that is statistically
+		 * significant and can detect errors.
 		 */
-		final int STATISTICAL_SIGNIFICANCE = 100 - OBSERVATION_LENGTH;
+		final int STATISTICAL_SIGNIFICANCE = 10000;
 
 		int[][] state = new int[ArtificialIntelligence.STATE_COLS][ArtificialIntelligence.STATE_ROWS];
 		int player = Util.PRNG.nextInt(ArtificialIntelligence.NUMBER_OF_PLAYERS + 1);
-
-		/*
-		 * Keep track of the last four values. They should not all be the same.
-		 */
-		Deque<Integer> values = new LinkedList<Integer>();
-
-		/*
-		 * Call the move method a hundred times to have a working set of values.
-		 */
 		ArtificialIntelligence ai = new RandomArtificialIntelligence();
 
 		/*
-		 * Saves the initial values.
+		 * Create a histogram of the data.
 		 */
-		for (int i = 0; i < OBSERVATION_LENGTH; i++) {
-			values.addLast(ai.move(state, player));
+		long histogram[] = new long[Board.COLS];
+		Arrays.fill(histogram, 0L);
+		for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
+			histogram[ai.move(state, player)]++;
 		}
 
 		/*
-		 * Shift other values.
+		 * Calculate the mean value.
 		 */
-		for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
-			/*
-			 * Drop first.
-			 */
-			Integer dropped = values.removeFirst();
-
-			/*
-			 * Count duplications.
-			 */
-			int counter = 1;
-			for (Integer value : values) {
-				if (dropped == value) {
-					counter++;
-				}
-			}
-
-			/*
-			 * Add new.
-			 */
-			values.addLast(ai.move(state, player));
-
-			/*
-			 * If all values are the same as the first value, fail the test.
-			 */
-			if (counter == OBSERVATION_LENGTH) {
-				fail("Last four values returned by the number generator are all the same!");
-			}
+		int sum = 0;
+		for (int i = 0; i < histogram.length; i++) {
+			sum += histogram[i] * i;
 		}
+		double mean = sum * 1.0 / STATISTICAL_SIGNIFICANCE;
+		final double minimumMean = 1.97;
+		final double maximumMean = 2.02;
+		assertTrue(minimumMean < mean);
+		assertTrue(maximumMean > mean);
 
-		// long histogram[] = new long[Board.COLS];
-		// Arrays.fill(histogram, 0L);
-		// for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
-		// histogram[ai.move(state, player)]++;
-		// }
+		/*
+		 * Calculate the standard deviation.
+		 */
+		double deviation = 0;
+		for (int i = 0; i < histogram.length; i++) {
+			deviation += Math.pow(i - mean, 2) * histogram[i];
+		}
+		deviation /= STATISTICAL_SIGNIFICANCE;
+		deviation = Math.sqrt(deviation);
 
-		// TODO 1. Mean value.
-		// TODO 2. Standard deviation.
-		// TODO 3. Fail if mean and standard deviation are unusual. Compare in
-		// epsilon delta.
+		final double minimumDeviation = 1.40;
+		final double maximumDeviation = 1.43;
+		assertTrue(minimumDeviation < deviation);
+		assertTrue(maximumDeviation > deviation);
 	}
 
 }
