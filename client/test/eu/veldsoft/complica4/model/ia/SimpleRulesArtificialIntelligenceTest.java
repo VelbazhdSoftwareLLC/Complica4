@@ -60,7 +60,6 @@ public class SimpleRulesArtificialIntelligenceTest {
 			sum += histogram[i] * i;
 		}
 		double mean = sum * 1.0 / STATISTICAL_SIGNIFICANCE;
-		System.out.println("mean = " + mean);
 		final double minimumMean = 1.59;
 		final double maximumMean = 1.63;
 		assertTrue(minimumMean < mean);
@@ -75,7 +74,6 @@ public class SimpleRulesArtificialIntelligenceTest {
 		}
 		deviation /= STATISTICAL_SIGNIFICANCE;
 		deviation = Math.sqrt(deviation);
-		System.out.println("deviation = " + deviation);
 
 		final double minimumDeviation = 1.40;
 		final double maximumDeviation = 1.43;
