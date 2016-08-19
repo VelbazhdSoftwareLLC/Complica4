@@ -28,7 +28,7 @@ public class AbstractArtificialIntelligenceTest {
 	@Test
 	public void testMove() {
 		int[][] state = new int[ArtificialIntelligence.STATE_COLS][ArtificialIntelligence.STATE_ROWS];
-		;
+
 		int player = Util.PRNG.nextInt(ArtificialIntelligence.NUMBER_OF_PLAYERS + 1);
 		ArtificialIntelligence ai = new AbstractArtificialIntelligence() {
 		};
@@ -58,7 +58,7 @@ public class AbstractArtificialIntelligenceTest {
 	 * the board.
 	 */
 	@Test
-	public void testMoveBadCols() {
+	public void testMoveInvalidColumn() {
 		int[][] state = new int[1 + Util.PRNG.nextInt(ArtificialIntelligence.STATE_COLS)
 				+ ArtificialIntelligence.STATE_COLS][];
 		int player = 0;
@@ -74,7 +74,7 @@ public class AbstractArtificialIntelligenceTest {
 	 * board.
 	 */
 	@Test
-	public void testMoveBadRows() {
+	public void testMoveInvalidRow() {
 		int[][] state = new int[ArtificialIntelligence.STATE_COLS][1
 				+ Util.PRNG.nextInt(ArtificialIntelligence.STATE_ROWS) + ArtificialIntelligence.STATE_ROWS];
 		int player = 0;

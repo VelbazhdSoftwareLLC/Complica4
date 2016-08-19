@@ -17,9 +17,9 @@ import eu.veldsoft.complica4.model.ia.RandomArtificialIntelligenceTest;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligenceTest;
 
 /**
- * Runs all tests classes. No class implementation is needed.
- * Simply running the class will run all classes listed as suite classes.
- *  
+ * Runs all tests classes. No class implementation is needed. Simply running the
+ * class will run all classes listed as suite classes.
+ * 
  * @author Georgi Gospodinov
  */
 @RunWith(Suite.class)

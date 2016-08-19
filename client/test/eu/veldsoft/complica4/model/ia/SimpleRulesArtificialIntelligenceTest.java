@@ -16,6 +16,7 @@ import eu.veldsoft.complica4.model.Util;
  * @author Georgi Gospodinov
  * @see SimpleRulesArtificialIntelligence
  */
+// TODO Fix like in the random AI.
 public class SimpleRulesArtificialIntelligenceTest {
 
 	/**

@@ -8,8 +8,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-//TODO Describe, nothing to test yet.
-
 /**
  * Tests the methods in the AlphaBetaArtificialIntelligence class. There are
  * currently no methods to test. This class only has a template.
@@ -39,5 +37,4 @@ public class AlphaBetaArtificialIntelligenceTest {
 	public void testMove() {
 		fail("Not yet implemented");
 	}
-
 }
