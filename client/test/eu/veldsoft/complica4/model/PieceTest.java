@@ -9,7 +9,6 @@ import org.junit.Test;
  * Tests the methods is the Piece enumeration.
  * 
  * @author Georgi Gospodinov
- * 
  * @see Piece
  */
 public class PieceTest {

@@ -2,71 +2,113 @@ package eu.veldsoft.complica4.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.encog.neural.networks.BasicNetwork;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.encog.neural.networks.BasicNetwork;
+import org.junit.Test;
+
 /**
+ * Tests the methods in the Util class.
  * 
- * @author Georgi
- *
+ * @author Georgi Gospodinov
  * @see Util
  */
 public class UtilTest {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
+	/**
+	 * Test to see if the respective method creates a new basic neural network
+	 * and correctly assigns all three layer sizes.
+	 */
 	@Test
 	public void testNewNetwork() {
-		int inputSize = 3, hiddenSize = 2, outputSize = 3;
+		/*
+		 * Create ANN with random layer sizes. Layer sizes are rarely going to
+		 * be larger than 10 neurons each.
+		 */
+		int inputSize = Util.PRNG.nextInt(10);
+		int hiddenSize = Util.PRNG.nextInt(10);
+		int outputSize = Util.PRNG.nextInt(10);
 		BasicNetwork net = Util.newNetwork(inputSize, hiddenSize, outputSize);
 
 		/*
-		 * 0th layer (input)
+		 * All layers should have their sizes assigned correctly.
 		 */
 		assertEquals(inputSize, net.getInputCount());
-
-		/*
-		 * 1st layer (hidden)
-		 */
 		assertEquals(hiddenSize, net.getLayerNeuronCount(1));
-
-		/*
-		 * 2nd layer (output)
-		 */
 		assertEquals(outputSize, net.getOutputCount());
 	}
 
 	@Test
 	public void testLoadFromFile() {
-		fail("Not yet implemented");
+		/*
+		 * Create ANN with random layer sizes. Layer sizes are rarely going to
+		 * be larger than 10 neurons each.
+		 */
+		int inputSize = Util.PRNG.nextInt(10);
+		int hiddenSize = Util.PRNG.nextInt(10);
+		int outputSize = Util.PRNG.nextInt(10);
+		BasicNetwork savedNet = Util.newNetwork(inputSize, hiddenSize, outputSize);
+
+		String fileName = Util.ANN_FILE_NAME;
+		Util.saveToFile(savedNet, fileName);
+
+		BasicNetwork loadedNet = Util.loadFromFile(fileName);
+		/*
+		 * After loading the network all the following properties should remain
+		 * the same.
+		 */
+		assertEquals(3, loadedNet.getLayerCount());
+		assertEquals(savedNet.getInputCount(), loadedNet.getInputCount());
+		assertEquals(savedNet.getLayerNeuronCount(1), loadedNet.getLayerNeuronCount(1));
+		assertEquals(savedNet.getOutputCount(), loadedNet.getOutputCount());
+
+		assertTrue(savedNet.dumpWeights().equals(loadedNet.dumpWeights()));
+
+		/*
+		 * The saved and loaded networks should be the same. As defined by the
+		 * encog java doc:
+		 * "For them to be equal they must be of the same structure, and have the same matrix values."
+		 */
+		assertTrue(savedNet.equals(loadedNet));
 	}
 
 	@Test
 	public void testSaveToFile() {
-		fail("Not yet implemented");
+		/*
+		 * Create ANN with random layer sizes. Layer sizes are rarely going to
+		 * be larger than 10 neurons each.
+		 */
+		int inputSize = Util.PRNG.nextInt(10);
+		int hiddenSize = Util.PRNG.nextInt(10);
+		int outputSize = Util.PRNG.nextInt(10);
+		BasicNetwork savedNet = Util.newNetwork(inputSize, hiddenSize, outputSize);
+
+		String fileName = Util.ANN_FILE_NAME;
+		Util.saveToFile(savedNet, fileName);
+
+		BasicNetwork loadedNet = Util.loadFromFile(fileName);
+		/*
+		 * The network should have three layers. And in each layer the number of
+		 * neurons should be the same as the one saved.
+		 */
+		assertEquals(3, loadedNet.getLayerCount());
+		assertEquals(savedNet.getInputCount(), loadedNet.getInputCount());
+		assertEquals(savedNet.getLayerNeuronCount(1), loadedNet.getLayerNeuronCount(1));
+		assertEquals(savedNet.getOutputCount(), loadedNet.getOutputCount());
+
+		/*
+		 * The weights should remain the same.
+		 */
+		assertTrue(savedNet.dumpWeights().equals(loadedNet.dumpWeights()));
+
+		/*
+		 * The saved and loaded networks should be the same. As defined by the
+		 * encog java doc:
+		 * "For them to be equal they must be of the same structure, and have the same matrix values."
+		 */
+		assertTrue(savedNet.equals(loadedNet));
 	}
 
 	@Test
@@ -94,8 +136,8 @@ public class UtilTest {
 
 		/*
 		 * The message logged should be the same as the one saved in the holder.
-		 * Logging adds a new line characters, so it needs to be added before
-		 * the assertion.
+		 * Logging adds a new line character, so it needs to be added before the
+		 * assertion.
 		 */
 		Util.log(generatedMessage);
 		String savedMessage = outputHolder.toString();

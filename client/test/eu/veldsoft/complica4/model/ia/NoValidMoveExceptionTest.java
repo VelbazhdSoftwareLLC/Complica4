@@ -8,6 +8,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Tests the methods in the custom exception class - NoValidMoveException. There
+ * are however no implemented methods in that class.
+ *
+ * @author Georgi Gospodinov
+ * @see NoValidMoveException
+ */
 public class NoValidMoveExceptionTest {
 
 	@BeforeClass

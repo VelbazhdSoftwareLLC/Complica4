@@ -8,6 +8,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Tests the methods in the AlphaBetaArtificialIntelligence class. There are
+ * currently no methods to test. This class only has a template.
+ *
+ * @author Georgi Gospodinov
+ * @see AlphaBetaArtificialIntelligence
+ */
 public class AlphaBetaArtificialIntelligenceTest {
 
 	@BeforeClass
@@ -30,5 +37,4 @@ public class AlphaBetaArtificialIntelligenceTest {
 	public void testMove() {
 		fail("Not yet implemented");
 	}
-
 }
