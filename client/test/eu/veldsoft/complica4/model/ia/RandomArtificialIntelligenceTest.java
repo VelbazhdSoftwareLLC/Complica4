@@ -1,5 +1,7 @@
 package eu.veldsoft.complica4.model.ia;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -45,33 +47,31 @@ public class RandomArtificialIntelligenceTest {
 		 * Calculate the mean value.
 		 */
 		double mean = 0;
-		for (int i = 0; i < histogram.length; i++) {
-			mean += histogram[i];
+		for (long amount : histogram) {
+			mean += amount;
 		}
 		mean /= histogram.length;
 
-		// final double EPSILON = 0.001;
-		for (int i = 0; i < histogram.length; i++) {
-			// TODO Math.abs(histogram[i]-mean)/STATISTICAL_SIGNIFICANCE >
-			// EPSILON;
-			// assertTrue(minimumMean < mean);
-			// assertTrue(maximumMean > mean);
+		final double VARIANCE = 0.01;
+		for (long amount : histogram) {
+			/*
+			 * If this assertion fails, then there is a column that has been
+			 * selected a lot more than the other four.
+			 */
+			assertTrue(Math.abs(amount - mean) / STATISTICAL_SIGNIFICANCE < VARIANCE);
 		}
 
 		/*
 		 * Calculate the standard deviation.
 		 */
 		double deviation = 0;
-		for (int i = 0; i < histogram.length; i++) {
-			deviation += Math.pow(histogram[i] - mean, 2);
+		for (long amount : histogram) {
+			deviation += Math.pow(amount - mean, 2);
 		}
 		deviation /= histogram.length;
 		deviation = Math.sqrt(deviation);
-
-		// final double MIN_SD = 1.40;
-		// final double MAX_SD = 1.43;
-		// assertTrue(minimumDeviation < deviation);
-		// assertTrue(maximumDeviation > deviation);
+		final double MAX_SD = 120;
+		assertTrue(deviation < MAX_SD);
 	}
 
 }

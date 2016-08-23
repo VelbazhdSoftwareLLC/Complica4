@@ -16,7 +16,6 @@ import eu.veldsoft.complica4.model.Util;
  * @author Georgi Gospodinov
  * @see SimpleRulesArtificialIntelligence
  */
-// TODO Fix like in the random AI.
 public class SimpleRulesArtificialIntelligenceTest {
 
 	/**
@@ -30,7 +29,7 @@ public class SimpleRulesArtificialIntelligenceTest {
 		 * The size of the working set of values that is statistically
 		 * significant and can detect errors.
 		 */
-		final int STATISTICAL_SIGNIFICANCE = 10000;
+		final int STATISTICAL_SIGNIFICANCE = 50000;
 
 		Board board = new Board();
 		int[][] state = null;
@@ -56,30 +55,32 @@ public class SimpleRulesArtificialIntelligenceTest {
 		/*
 		 * Calculate the mean value.
 		 */
-		int sum = 0;
-		for (int i = 0; i < histogram.length; i++) {
-			sum += histogram[i] * i;
+		double mean = 0;
+		for (long amount : histogram) {
+			mean += amount;
 		}
-		double mean = sum * 1.0 / STATISTICAL_SIGNIFICANCE;
-		final double minimumMean = 1.59;
-		final double maximumMean = 1.63;
-		assertTrue(minimumMean < mean);
-		assertTrue(maximumMean > mean);
+		mean /= histogram.length;
+
+		final double VARIANCE = 0.12;
+		for (long amount : histogram) {
+			/*
+			 * If this assertion fails, then there is a column that has been
+			 * selected a lot more than the other four.
+			 */
+			assertTrue(Math.abs(amount - mean) / STATISTICAL_SIGNIFICANCE < VARIANCE);
+		}
 
 		/*
 		 * Calculate the standard deviation.
 		 */
 		double deviation = 0;
-		for (int i = 0; i < histogram.length; i++) {
-			deviation += Math.pow(i - mean, 2) * histogram[i];
+		for (long amount : histogram) {
+			deviation += Math.pow(amount - mean, 2);
 		}
-		deviation /= STATISTICAL_SIGNIFICANCE;
+		deviation /= histogram.length;
 		deviation = Math.sqrt(deviation);
-
-		final double minimumDeviation = 1.40;
-		final double maximumDeviation = 1.43;
-		assertTrue(minimumDeviation < deviation);
-		assertTrue(maximumDeviation > deviation);
+		final double MAX_SD = 3050;
+		assertTrue(deviation < MAX_SD);
 	}
 
 }
