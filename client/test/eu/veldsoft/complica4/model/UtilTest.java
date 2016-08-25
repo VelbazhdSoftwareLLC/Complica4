@@ -122,8 +122,7 @@ public class UtilTest {
 			builder.append((char) (Util.PRNG.nextInt(26) + 97));
 		}
 
-		String generatedMessage = builder.toString();
-		System.out.println(generatedMessage);
+		String generatedMessage = builder.toString().trim();
 
 		/*
 		 * Hold the output.
@@ -141,14 +140,11 @@ public class UtilTest {
 		 */
 		Util.log(generatedMessage);
 		String savedMessage = outputHolder.toString();
-		generatedMessage += "\n";
 
 		System.out.flush();
 		System.setOut(oldStream);
-		System.out.println(generatedMessage);
-		System.out.println(savedMessage);
 
-		assertTrue(generatedMessage.equals(savedMessage));
+		assertTrue(generatedMessage.equals(savedMessage.trim()));
 	}
 
 }

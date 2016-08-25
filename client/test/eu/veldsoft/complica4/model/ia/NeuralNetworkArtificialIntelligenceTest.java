@@ -96,7 +96,6 @@ public class NeuralNetworkArtificialIntelligenceTest {
 		}
 		deviation /= histogram.length;
 		deviation = Math.sqrt(deviation);
-		System.out.println("dev=" + deviation);
 		final double MAX_SD = 20000;
 		assertTrue(deviation < MAX_SD);
 	}
