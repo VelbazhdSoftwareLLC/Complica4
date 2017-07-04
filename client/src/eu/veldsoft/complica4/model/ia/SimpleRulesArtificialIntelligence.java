@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Util;
 
 /**
@@ -520,8 +521,8 @@ public class SimpleRulesArtificialIntelligence extends AbstractArtificialIntelli
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int move(int[][] state, int player) throws NoValidMoveException {
-		super.move(state, player);
+	public int move(Board board, int player) throws NoValidMoveException {
+		super.move(board, player);
 
 		/*
 		 * Keep local object copies.

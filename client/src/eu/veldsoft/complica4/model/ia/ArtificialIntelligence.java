@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import eu.veldsoft.complica4.model.Board;
+
 /**
  * Game artificial intelligence common interface.
  * 
@@ -38,8 +40,8 @@ public interface ArtificialIntelligence {
 	/**
 	 * Move suggestion by the A.I. module.
 	 * 
-	 * @param state
-	 *            Board state as integer numbers matrix.
+	 * @param board
+	 *            Board object.
 	 * @param player
 	 *            Player identifier.
 	 * 
@@ -48,5 +50,5 @@ public interface ArtificialIntelligence {
 	 * @throws NoValidMoveException
 	 *             If there is no valid move conditions of the board.
 	 */
-	int move(int[][] state, int player) throws NoValidMoveException;
+	int move(Board board, int player) throws NoValidMoveException;
 }

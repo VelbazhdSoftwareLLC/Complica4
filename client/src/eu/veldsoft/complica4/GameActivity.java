@@ -24,6 +24,7 @@ import eu.veldsoft.complica4.model.Example;
 import eu.veldsoft.complica4.model.Piece;
 import eu.veldsoft.complica4.model.Util;
 import eu.veldsoft.complica4.model.ia.ArtificialIntelligence;
+import eu.veldsoft.complica4.model.ia.MonteCarloArtificialIntelligence;
 import eu.veldsoft.complica4.model.ia.SimpleRulesArtificialIntelligence;
 import eu.veldsoft.complica4.storage.MovesHistoryDatabaseHelper;
 
@@ -88,20 +89,18 @@ public class GameActivity extends Activity {
 				return;
 			}
 
-			int state[][] = board.getState();
-
 			switch (board.getTurn() % 4) {
 			case 0:
-				board.addTo(bots[0].move(state, 1), Piece.PLAYER1);
+				board.addTo(bots[0].move(board, 1), Piece.PLAYER1);
 				break;
 			case 1:
-				board.addTo(bots[1].move(state, 2), Piece.PLAYER2);
+				board.addTo(bots[1].move(board, 2), Piece.PLAYER2);
 				break;
 			case 2:
-				board.addTo(bots[2].move(state, 3), Piece.PLAYER3);
+				board.addTo(bots[2].move(board, 3), Piece.PLAYER3);
 				break;
 			case 3:
-				board.addTo(bots[3].move(state, 4), Piece.PLAYER4);
+				board.addTo(bots[3].move(board, 4), Piece.PLAYER4);
 				break;
 			}
 
@@ -239,12 +238,14 @@ public class GameActivity extends Activity {
 		if (net == null) {
 			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
 		}
-		bots = new ArtificialIntelligence[] { new SimpleRulesArtificialIntelligence(),
+		bots = new ArtificialIntelligence[] { 
+				new SimpleRulesArtificialIntelligence(),
 				// new NeuralNetworkArtificialIntelligence(net, Board.COLS
 				// * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
 				// * Board.ROWS / 2, Board.COLS, Piece.minId(),
 				// Piece.maxId()),
-				new SimpleRulesArtificialIntelligence(), new SimpleRulesArtificialIntelligence(),
+				new SimpleRulesArtificialIntelligence(), 
+				new MonteCarloArtificialIntelligence(5000),
 				new SimpleRulesArtificialIntelligence(), };
 
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);

@@ -1,7 +1,9 @@
 package eu.veldsoft.complica4.model.ia;
 
+import eu.veldsoft.complica4.model.Board;
+
 /**
- * Abstract A.I. clase. It is used as parent of the real A.I. classes.
+ * Abstract A.I. class. It is used as parent of the real A.I. classes.
  * 
  * @author Todor Balabanov
  */
@@ -10,7 +12,9 @@ abstract class AbstractArtificialIntelligence implements ArtificialIntelligence 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int move(int[][] state, int player) throws NoValidMoveException {
+	public int move(Board board, int player) throws NoValidMoveException {
+		int[][] state = board.getState();
+		
 		if (state == null) {
 			throw new NoValidMoveException();
 		}

@@ -4,6 +4,7 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.neural.networks.BasicNetwork;
 
+import eu.veldsoft.complica4.model.Board;
 import eu.veldsoft.complica4.model.Util;
 
 /**
@@ -58,9 +59,10 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int move(int[][] state, int player) throws NoValidMoveException {
-		super.move(state, player);
-
+	public int move(Board board, int player) throws NoValidMoveException {
+		super.move(board, player);
+		int[][] state = board.getState();
+		
 		/*
 		 * State matrix should be with valid dimensions.
 		 */

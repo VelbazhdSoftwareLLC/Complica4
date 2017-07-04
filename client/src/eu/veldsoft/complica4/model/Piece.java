@@ -44,6 +44,40 @@ public enum Piece {
 	}
 
 	/**
+	 * Constant getter by identifier.
+	 * 
+	 * @param id
+	 *            Piece identifier.
+	 * 
+	 * @return Piece constant.
+	 */
+	public static Piece get(int id) {
+		Piece piece = Piece.EMPTY;
+		for (Piece p : values()) {
+			if (p.id == id) {
+				piece = p;
+			}
+		}
+		return piece;
+	}
+
+	/**
+	 * Find who is playing on this turn number.
+	 * 
+	 * @param turn
+	 *            Turn number.
+	 * 
+	 * @return Constant of the player who is playing.
+	 */
+	static public Piece whoPlays(int turn) {
+		if (turn < 0) {
+			return EMPTY;
+		}
+
+		return get(turn % (values().length - 1) + 1);
+	}
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param id

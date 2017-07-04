@@ -1,5 +1,7 @@
 package eu.veldsoft.complica4.model.ia;
 
+import eu.veldsoft.complica4.model.Board;
+
 /**
  * Alpha-beta pruning base A.I.
  * 
@@ -10,8 +12,8 @@ public class AlphaBetaArtificialIntelligence extends AbstractArtificialIntellige
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int move(int[][] state, int player) throws NoValidMoveException {
-		super.move(state, player);
+	public int move(Board board, int player) throws NoValidMoveException {
+		super.move(board, player);
 
 		return 0;
 	}

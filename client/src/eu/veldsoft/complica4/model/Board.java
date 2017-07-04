@@ -52,6 +52,21 @@ public class Board {
 	private List<Example> session = new ArrayList<Example>();
 
 	/**
+	 * Constructor without parameters.
+	 */
+	public Board() {
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param original Original board instance.
+	 */
+	public Board(Board original) {
+		// TODO Should be implemented for the A.I. modules to work as deep copy of the board.
+	}
+
+	/**
 	 * Check for horizontal win line.
 	 * 
 	 * @param i
