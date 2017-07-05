@@ -40,7 +40,7 @@ public class RandomArtificialIntelligenceTest {
 		long histogram[] = new long[Board.COLS];
 		Arrays.fill(histogram, 0L);
 		for (int i = 0; i < STATISTICAL_SIGNIFICANCE; i++) {
-			histogram[ai.move(state, player)]++;
+			// TODO histogram[ai.move(state, player)]++;
 		}
 
 		/*

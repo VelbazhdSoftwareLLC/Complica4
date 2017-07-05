@@ -1,8 +1,10 @@
 package eu.veldsoft.complica4.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -60,10 +62,32 @@ public class Board {
 	/**
 	 * Copy constructor.
 	 * 
-	 * @param original Original board instance.
+	 * @param original
+	 *            Original board instance.
 	 */
 	public Board(Board original) {
-		// TODO Should be implemented for the A.I. modules to work as deep copy of the board.
+		this.turn = original.turn;
+		this.gameOver = original.gameOver;
+
+		/*
+		 * Memory allocation.
+		 */
+		this.pieces = new Piece[original.pieces.length][];
+		for (int i = 0; i < pieces.length; i++) {
+			this.pieces[i] = new Piece[original.pieces[i].length];
+		}
+
+		/*
+		 * Array content copy.
+		 */
+		for (int i = 0; i < pieces.length; i++) {
+			for (int j = 0; j < pieces[i].length; j++) {
+				this.pieces[i][j] = original.pieces[i][j];
+			}
+		}
+
+		// TODO Deep copy of elements should be implemented.
+		this.session.addAll(original.session);
 	}
 
 	/**
@@ -475,5 +499,37 @@ public class Board {
 		}
 
 		return winners;
+	}
+
+	/**
+	 * Get score for all players.
+	 * 
+	 * @return Players scores.
+	 */
+	public Map<Piece, Integer> score() {
+		Map<Piece, Integer> score = new HashMap<Piece, Integer>();
+
+		/*
+		 * List all winners by single piece instance.
+		 */
+		Set<Piece> list = new HashSet<Piece>();
+		int winners[][] = winners();
+		for (int i = 0; i < pieces.length && i < winners.length; i++) {
+			for (int j = 0; j < pieces[i].length && j < winners[i].length; j++) {
+				if (winners[i][j] == 1) {
+					list.add(pieces[i][j]);
+				}
+			}
+		}
+
+		/*
+		 * Score each player from the winners list.
+		 */
+		for (Piece p : list) {
+			// TODO Find better score system.
+			score.put(p, 1000 - turn);
+		}
+
+		return score;
 	}
 }

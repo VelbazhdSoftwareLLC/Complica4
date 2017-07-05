@@ -238,14 +238,12 @@ public class GameActivity extends Activity {
 		if (net == null) {
 			net = Util.loadFromFile(getFilesDir() + "/" + Util.ANN_FILE_NAME);
 		}
-		bots = new ArtificialIntelligence[] { 
-				new SimpleRulesArtificialIntelligence(),
+		bots = new ArtificialIntelligence[] { new SimpleRulesArtificialIntelligence(),
 				// new NeuralNetworkArtificialIntelligence(net, Board.COLS
 				// * Board.ROWS + Board.NUMBER_OF_PLAYERS, Board.COLS
 				// * Board.ROWS / 2, Board.COLS, Piece.minId(),
 				// Piece.maxId()),
-				new SimpleRulesArtificialIntelligence(), 
-				new MonteCarloArtificialIntelligence(5000),
+				new SimpleRulesArtificialIntelligence(), new MonteCarloArtificialIntelligence(5000),
 				new SimpleRulesArtificialIntelligence(), };
 
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);

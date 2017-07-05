@@ -49,7 +49,7 @@ public class SimpleRulesArtificialIntelligenceTest {
 			Utility.fillRandomly(board);
 			state = board.getState();
 			player = Util.PRNG.nextInt(ArtificialIntelligence.NUMBER_OF_PLAYERS + 1);
-			histogram[ai.move(state, player)]++;
+			// TODO histogram[ai.move(state, player)]++;
 		}
 
 		/*

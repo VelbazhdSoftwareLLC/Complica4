@@ -62,7 +62,7 @@ public class NeuralNetworkArtificialIntelligence extends AbstractArtificialIntel
 	public int move(Board board, int player) throws NoValidMoveException {
 		super.move(board, player);
 		int[][] state = board.getState();
-		
+
 		/*
 		 * State matrix should be with valid dimensions.
 		 */

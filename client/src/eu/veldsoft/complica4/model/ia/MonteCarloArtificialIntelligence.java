@@ -103,7 +103,7 @@ public class MonteCarloArtificialIntelligence extends AbstractArtificialIntellig
 			 * Others have current player score that is why it should be
 			 * multiplied by two.
 			 */
-			counters.put(move, counters.get(move) + 2 * score.get(original.playing()) - others);
+			counters.put(move, counters.get(move) + 2 * score.get(Piece.whoPlays(original.getTurn())) - others);
 
 			/*
 			 * Reinitialize the board for the next experiment.

@@ -14,7 +14,7 @@ abstract class AbstractArtificialIntelligence implements ArtificialIntelligence 
 	@Override
 	public int move(Board board, int player) throws NoValidMoveException {
 		int[][] state = board.getState();
-		
+
 		if (state == null) {
 			throw new NoValidMoveException();
 		}
