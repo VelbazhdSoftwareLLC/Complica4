@@ -4,6 +4,10 @@ header('Content-type:application/json;charset=utf-8');
 require 'database.php';
 
 if(isset($_POST['save_neural_network'])) {
+  /*
+   * Database connection should be opened before MySQL real escape string to be done.
+   */
+  open_my_db();
   $json = json_decode($_POST['save_neural_network'], true);
   foreach ($json as $key => $value) {
     if($key == 'rating') {
@@ -18,7 +22,6 @@ if(isset($_POST['save_neural_network'])) {
     }
   }
 
-  open_my_db();
   query_my_db( "INSERT INTO neural_networks (object, rating) VALUES ('".$object."', '".$rating."');" );
   close_my_db();
 }
