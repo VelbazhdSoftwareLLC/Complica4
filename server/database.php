@@ -12,7 +12,7 @@ function open_my_db()
 }
 function query_my_db( $qrystr )
 {
-	$qrystr = eregi_replace("\;$", "", $qrystr);
+	$qrystr = preg_replace('/\;$/', '', $qrystr);
 	$resstrs = "";
 	if( !$GLOBALS['link'] ) {
 		$resstrs = false;
